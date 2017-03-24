@@ -166,7 +166,7 @@ module.exports = function (grunt) {
             dev: {
                 // webpack options
                 //  devtool: 'cheap-module-eval-source-map',
-                entry: ["./<%= paths.app %>/state-machine.js"],
+                entry: ["./<%= paths.app %>/app.js"],
                 failOnError: true, // don't report error to grunt if webpack find errors
                 // Use this if webpack errors are tolerable and grunt should continue
                 // hot: true, // adds the HotModuleReplacementPlugin and switch the server to hot mode
