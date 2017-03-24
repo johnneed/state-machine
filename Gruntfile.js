@@ -153,7 +153,7 @@ module.exports = function (grunt) {
         },
         watch: {
             app: {
-                files: "<%= paths.app %>/**/*.jsx",
+                files: "<%= paths.app %>/**/*.js",
                 tasks: ["webpack:dev"]
             },
             styles: {
