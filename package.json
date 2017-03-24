@@ -47,6 +47,7 @@
     "eslint": "^3.18.0",
     "eslint-plugin-babel": "^4.1.1",
     "eslint-plugin-react": "^6.10.0",
+    "flow": "^0.2.3",
     "grunt": "^1.0.1",
     "grunt-babel": "^6.0.0",
     "grunt-browser-sync": "^2.2.0",
