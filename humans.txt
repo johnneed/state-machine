@@ -1,0 +1,15 @@
+# humanstxt.org/
+# The humans responsible & technology colophon
+
+# TEAM
+
+    <Sam> -- <Chief Web Application Architect> -- <twitter>
+
+# THANKS
+
+    <name>
+
+# TECHNOLOGY COLOPHON
+
+    CSS3, HTML5
+    Node, React

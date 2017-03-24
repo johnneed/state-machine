@@ -1,0 +1,86 @@
+{
+  "name": "state-machine",
+  "version": "1.0.0",
+  "description": "An awesome JavaScript App for exploring State",
+  "main": "Gruntfile.js",
+  "directories": {
+    "doc": "doc"
+  },
+  "dependencies": {
+    "babel-core": "^6.24.0",
+    "babel-eslint": "^7.1.1",
+    "babel-jest": "^19.0.0",
+    "babel-loader": "^6.4.1",
+    "babel-preset-latest": "^6.24.0",
+    "babel-preset-react": "^6.23.0",
+    "eslint": "^3.18.0",
+    "eslint-plugin-babel": "^4.1.1",
+    "eslint-plugin-react": "^6.10.0",
+    "grunt": "^1.0.1",
+    "grunt-babel": "^6.0.0",
+    "grunt-browser-sync": "^2.2.0",
+    "grunt-contrib-clean": "^1.0.0",
+    "grunt-contrib-concat": "^1.0.1",
+    "grunt-contrib-copy": "^1.0.0",
+    "grunt-contrib-less": "^1.4.1",
+    "grunt-contrib-uglify": "^2.2.0",
+    "grunt-contrib-watch": "^1.0.0",
+    "grunt-eslint": "^19.0.0",
+    "grunt-webpack": "^2.0.1",
+    "less": "^2.7.2",
+    "less-plugin-autoprefix": "^1.5.1",
+    "less-plugin-clean-css": "^1.5.1",
+    "load-grunt-tasks": "^3.5.2",
+    "path": "^0.12.7",
+    "webpack": "^2.2.1",
+    "webpack-dev-server": "^2.4.2"
+  },
+  "devDependencies": {
+    "babel": "^6.23.0",
+    "babel-core": "^6.24.0",
+    "babel-eslint": "^7.1.1",
+    "babel-jest": "^19.0.0",
+    "babel-loader": "^6.4.1",
+    "babel-preset-latest": "^6.24.0",
+    "babel-preset-react": "^6.23.0",
+    "babel-preset-stage-0": "^6.22.0",
+    "eslint": "^3.18.0",
+    "eslint-plugin-babel": "^4.1.1",
+    "eslint-plugin-react": "^6.10.0",
+    "grunt": "^1.0.1",
+    "grunt-babel": "^6.0.0",
+    "grunt-browser-sync": "^2.2.0",
+    "grunt-contrib-clean": "^1.0.0",
+    "grunt-contrib-concat": "^1.0.1",
+    "grunt-contrib-copy": "^1.0.0",
+    "grunt-contrib-less": "^1.4.1",
+    "grunt-contrib-uglify": "^2.2.0",
+    "grunt-contrib-watch": "^1.0.0",
+    "grunt-eslint": "^19.0.0",
+    "grunt-webpack": "^2.0.1",
+    "less": "^2.7.2",
+    "less-plugin-autoprefix": "^1.5.1",
+    "less-plugin-clean-css": "^1.5.1",
+    "load-grunt-tasks": "^3.5.2",
+    "path": "^0.12.7",
+    "webpack": "^2.2.1",
+    "webpack-dev-server": "^2.4.2"
+  },
+  "scripts": {
+    "test": "test",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/johnneed/state-machine.git"
+  },
+  "keywords": [
+    "React"
+  ],
+  "author": "John Need",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/johnneed/state-machine/issues"
+  },
+  "homepage": "https://github.com/johnneed/state-machine#readme"
+}

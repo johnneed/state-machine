@@ -1,0 +1,45 @@
+@import "../base/global-variables";
+
+.layout-default {
+    .layout-default_header {
+        height: 5rem;
+        text-align: center;
+        padding: 1rem;
+        box-sizing: border-box;
+        background-color: @background-color;
+        color: @text-color;
+        border-bottom: dashed 1px @color-grey-5;
+    }
+    .layout-default_h1 {
+        font-size: 2rem;
+        text-align: center;
+        margin: 0;
+        padding: 0;
+    }
+    .layout-default_main {
+        height: calc(~"100vh - " 5rem);
+        width: 100vw;
+        padding: 1rem;
+        box-sizing: border-box;
+        overflow-y:auto;
+        background-color: @background-color;
+        color: @text-color;
+    }
+}
+
+.module-clients-table_client-table {
+    .layout-default {
+
+    }
+}
+
+@media screen and (min-width: @tablet-width) {
+    .layout-default {
+    }
+}
+
+@media screen and (min-width: @desktop-width) {
+    .layout-default {
+
+    }
+}
