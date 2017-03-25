@@ -23,7 +23,7 @@ button {
     border: 1px;
     color: #AAA;
     transition: color 0.25s, box-shadow 0.25s, background-color 0.25s;
-    outline:none;
+    outline: none;
 }
 
 button:hover, button:focus {
@@ -34,6 +34,18 @@ button:hover, button:focus {
 
 input[type="text"], input[type="number"] {
     min-width: 10rem;
+    background: #353535;
+    color: #AAA;
+    border: solid 1px #393939;
+    outline: none;
+    padding: 0.2rem;
+    display:inline-block;
+}
+
+input[type="text"]:focus, input[type="number"]:focus, input[type="text"]:hover, input[type="number"]:hover {
+    color: #DDD;
+    background: #404040;
+    box-shadow: 0 11px 14px -12px rgba(20, 20, 40, 0.75);
 }
 
 .back-state-button {
