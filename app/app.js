@@ -40,8 +40,10 @@ let addState = R.curry((key, event) => {
     return render(myStateMachine.addState(newState));
 });
 
+let numStream1 = Rx.Observable.fromEvent(numberBox, "keyup");
+let numStream2 = Rx.Observable.fromEvent(numberBox, "change");
+Rx.Observable.merge(numStream1,numStream2).subscribe(addState("number"));
 Rx.Observable.fromEvent(wordBox, "keyup").subscribe(addState("word"));
-Rx.Observable.fromEvent(numberBox, "keyup").subscribe(addState("number"));
 Rx.Observable.fromEvent(forwardStateButton, "click").subscribe(moveState(1));
 Rx.Observable.fromEvent(backStateButton, "click").subscribe(moveState(-1));
 Rx.Observable.fromEvent(resetStateButton, "click").subscribe(reset);

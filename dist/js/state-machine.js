@@ -10209,8 +10209,10 @@ var addState = _ramda2.default.curry(function (key, event) {
     return render(myStateMachine.addState(newState));
 });
 
+var numStream1 = _Rx2.default.Observable.fromEvent(numberBox, "keyup");
+var numStream2 = _Rx2.default.Observable.fromEvent(numberBox, "change");
+_Rx2.default.Observable.merge(numStream1, numStream2).subscribe(addState("number"));
 _Rx2.default.Observable.fromEvent(wordBox, "keyup").subscribe(addState("word"));
-_Rx2.default.Observable.fromEvent(numberBox, "keyup").subscribe(addState("number"));
 _Rx2.default.Observable.fromEvent(forwardStateButton, "click").subscribe(moveState(1));
 _Rx2.default.Observable.fromEvent(backStateButton, "click").subscribe(moveState(-1));
 _Rx2.default.Observable.fromEvent(resetStateButton, "click").subscribe(reset);
