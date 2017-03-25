@@ -156,7 +156,11 @@ module.exports = function (grunt) {
                 files: "<%= paths.app %>/**/*.js",
                 tasks: ["webpack:dev"]
             },
-            styles: {
+            public: {
+                files: "<%= paths.public %>/**/*",
+                tasks: ["copy:dist"]
+            },
+            less: {
                 files: "<%= paths.less %>/**/*.less",
                 tasks: ["less:dev"]
             }

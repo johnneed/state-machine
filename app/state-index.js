@@ -2,8 +2,9 @@ export function stateIndex(stateMachine) {
     var index = 0;
     return {
         addState: function (state) {
-            index += 1;
-            return stateMachine.addState(state);
+            var _state =  stateMachine.addState(state, index);
+            index = stateMachine.size() - 1;
+            return _state;
         },
         moveState: function (wayBackNumber) {
             index += wayBackNumber;
@@ -14,6 +15,13 @@ export function stateIndex(stateMachine) {
         },
         currentState: function(){
             return stateMachine.returnState(index);
+        },
+        isLastState: function(){
+            return stateMachine.size() === index + 1;
+        },
+        reset: function(){
+            index = 0;
+            return stateMachine.clearHistory();
         }
     }
 }

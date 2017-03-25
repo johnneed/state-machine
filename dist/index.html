@@ -5,33 +5,32 @@
     <meta charset="UTF-8"/>
     <link href="https://fonts.googleapis.com/css?family=Space+Mono" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="css/style.css"/>
-
 </head>
 <body>
 <section id="stateInput" class="state-input">
     <label class="state-label">
         <span>a number : </span>
-        <input id="numberBox" class="state-number-box" type="number" min="0" max="100" step="1"/>
+        <input id="numberBox" class="state-number-box" type="number" min="0" max="100" step="1" tabindex="1" />
     </label>
     <label class="state-label">
         <span>a word : </span>
-        <input id="wordBox" class="state-number-box" type="text"/>
+        <input id="wordBox" class="state-number-box" type="text" tabindex="2" />
     </label>
-    <button id="addStateButton" class="add-state-button">Add</button>
 </section>
 <section id="stateDisplay" class="state-display">
     <h3 class="state-index"><span>State Index : </span><span class="state-index" id="stateIndexDisplay"></span></h3>
     <span class="state-label">
-      <span>a number : </span>
+        <span>a number : </span>
     <span id="numberDisplay" class="state-number-display"></span>
     </span>
     <span class="state-label">
-       <span>a word : </span>
+        <span>a word : </span>
     <span id="wordDisplay" class="state-word-display"></span>
     </span>
     <span class="controls">
-      <button id="backStateButton" class="back-state-button">&larr;</button>
-      <button id="forwardStateButton" class="forward-state-button">&rarr;</button>
+        <button id="backStateButton" class="back-state-button" tabindex="10" >&larr;</button>
+        <button id="resetStateButton" class="reset-state-button" tabindex="11" >Reset</button>
+        <button id="forwardStateButton" class="forward-state-button" tabindex="12" >&rarr;</button>
     </span>
 </section>
 <script src="js/state-machine.js"></script>
