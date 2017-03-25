@@ -1,16 +1,18 @@
+// @flow
+
 import {default as R} from "ramda";
 
-var _history = [{}];
+let _history = new WeakMap();
 
-function diffState(history, state) {
-    var currentHistory = runStateTo(history, history.length - 1);
-    var proposedHistory = runStateTo(history.concat(state), history.length);
+function diffState(history: array, state: array): boolean {
+    let currentHistory = runStateTo(history, history.length - 1);
+    let proposedHistory = runStateTo(history.concat(state), history.length);
     return R.equals(currentHistory, proposedHistory);
 }
 
-function runStateTo(history, stateIndex) {
+function runStateTo(history: Object, stateIndex: number): Object {
 
-    function _run(index, state) {
+    function _run(index: number, state: Object) {
         if (index === 0) {
             return Object.assign({}, state);
         }
@@ -26,27 +28,50 @@ function runStateTo(history, stateIndex) {
     return _run(stateIndex, history[0]);
 }
 
-export var stateMachine = {
-    addState: function (state, index) {
-        var historyPart = _history.slice(0, (typeof index === "number" ? index + 1 : _history.length));
+export class StateMachine {
+
+    static create(): StateMachine {
+        return new StateMachine();
+    }
+
+    constructor() {
+        this.addState = this.addState.bind(this);
+        this.returnState = this.returnState.bind(this);
+        this.size = this.size.bind(this);
+        this.clearHistory = this.clearHistory.bind(this);
+        this.destroy = this.destroy.bind(this);
+        _history.set(this, [{}]);
+    }
+
+    addState(state, index): Object {
+        let myHistory = _history.get(this);
+        let historyPart = myHistory.slice(0, (typeof index === "number" ? index + 1 : myHistory.length));
         if (!diffState(historyPart, state)) {
             historyPart = historyPart.concat(state);
-            _history = historyPart;
+            _history.set(this, historyPart);
         }
         return runStateTo(historyPart, historyPart.length - 1);
-    },
-    returnState: function (index) {
+    }
+
+    returnState(index: ?number): Object {
+        let _index = index || _history.get(this).length - 1; // return the last state if no index provided
         try {
-            return runStateTo(_history, index);
+            return runStateTo(_history.get(this), _index);
         } catch (err) {
-            return runStateTo(_history, _history.length - 1);
+            return runStateTo(_history.get(this), _history.get(this).length - 1);
         }
-    },
-    size: function () {
-        return _history.length;
-    },
-    clearHistory: function () {
-        _history = [{}];
+    }
+
+    size(): number {
+        return _history.get(this).length;
+    }
+
+    clearHistory(): Object {
+        _history.set(this, [{}]);
         return runStateTo(_history, 0);
     }
-};
+
+    destroy(): void {
+        _history.delete(this);
+    }
+}
