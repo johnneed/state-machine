@@ -16,7 +16,7 @@
     
 5. Sign into Github or create a new Github account: https://github.com/join?source=header-home
 
-4. In your terminal program, navigate to where you want your code to live by using the **cd** command. For instance you navigate to your profile using **cd ~/**. 
+4. In your terminal program, navigate to where you want your code to live by using the **cd** command. For instance you navigate to your profile using **cd ~**. 
 
 5. Create a folder if you need to.  For instance you can create a folder called "my-projects" like this **mkdir my-projects** and then navigate into that folder **cd my-projects**
 
