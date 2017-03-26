@@ -5,12 +5,12 @@ import {default as R} from "ramda";
 let _history = new WeakMap();
 
 function diffState(history: array, state: array): boolean {
-    let currentHistory = runStateTo(history, history.length - 1);
-    let proposedHistory = runStateTo(history.concat(state), history.length);
+    let currentHistory = runTo(history, history.length - 1);
+    let proposedHistory = runTo(history.concat(state), history.length);
     return R.equals(currentHistory, proposedHistory);
 }
 
-function runStateTo(history: Object, stateIndex: number): Object {
+function runTo(history: Object, stateIndex: number): Object {
 
     function _run(index: number, state: Object) {
         if (index === 0) {
@@ -28,14 +28,14 @@ function runStateTo(history: Object, stateIndex: number): Object {
     return _run(stateIndex, history[0]);
 }
 
-export class StateMachine {
+export class SequentialStateMachine {
 
-    static create(): StateMachine {
-        return new StateMachine();
+    static create(): SequentialStateMachine {
+        return new SequentialStateMachine();
     }
 
     constructor() {
-        this.addState = this.addState.bind(this);
+        this.addSequence = this.addSequence.bind(this);
         this.returnState = this.returnState.bind(this);
         this.size = this.size.bind(this);
         this.clearHistory = this.clearHistory.bind(this);
@@ -43,22 +43,22 @@ export class StateMachine {
         _history.set(this, [{}]);
     }
 
-    addState(state, index): Object {
+    addSequence(sequence, index): Object {
         let myHistory = _history.get(this);
         let historyPart = myHistory.slice(0, (typeof index === "number" ? index + 1 : myHistory.length));
-        if (!diffState(historyPart, state)) {
-            historyPart = historyPart.concat(state);
+        if (!diffState(historyPart, sequence)) {
+            historyPart = historyPart.concat(sequence);
             _history.set(this, historyPart);
         }
-        return runStateTo(historyPart, historyPart.length - 1);
+        return runTo(historyPart, historyPart.length - 1);
     }
 
     returnState(index: ?number): Object {
         let _index = index || _history.get(this).length - 1; // return the last state if no index provided
         try {
-            return runStateTo(_history.get(this), _index);
+            return runTo(_history.get(this), _index);
         } catch (err) {
-            return runStateTo(_history.get(this), _history.get(this).length - 1);
+            return runTo(_history.get(this), _history.get(this).length - 1);
         }
     }
 
@@ -68,7 +68,7 @@ export class StateMachine {
 
     clearHistory(): Object {
         _history.set(this, [{}]);
-        return runStateTo(_history, 0);
+        return runTo(_history, 0);
     }
 
     destroy(): void {

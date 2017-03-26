@@ -26,9 +26,9 @@ function render(state) {
     return state;
 }
 
-function moveState(velocity) {
+function moveToState(velocity) {
     return function () {
-        return render(myStateMachine.moveState(velocity));
+        return render(myStateMachine.moveToState(velocity));
     }
 }
 
@@ -40,19 +40,19 @@ function reset() {
 let addState = R.curry((key, event) => {
     let newState = {};
     newState[key] = event.target.value;
-    return render(myStateMachine.addState(newState));
+    return render(myStateMachine.addSequence(newState));
 });
 
 let numStream1 = Rx.Observable.fromEvent(numberBox, "keyup");
 let numStream2 = Rx.Observable.fromEvent(numberBox, "change");
 Rx.Observable.merge(numStream1, numStream2).subscribe(addState("number"));
 Rx.Observable.fromEvent(wordBox, "keyup").subscribe(addState("word"));
-Rx.Observable.fromEvent(forwardStateButton, "click").subscribe(moveState(1));
-Rx.Observable.fromEvent(backStateButton, "click").subscribe(moveState(-1));
+Rx.Observable.fromEvent(forwardStateButton, "click").subscribe(moveToState(1));
+Rx.Observable.fromEvent(backStateButton, "click").subscribe(moveToState(-1));
 Rx.Observable.fromEvent(resetStateButton, "click").subscribe(reset);
 myStateMachine.addRule({
     number: function (value) {
-        return !isNaN(value) && Number(value) >= 0 && Number(value) <= 100;
+        return value === "" || typeof value === "undefined" || (!isNaN(value) && Number(value) >= 0 && Number(value) <= 100);
     }
 });
 myStateMachine.addRule({

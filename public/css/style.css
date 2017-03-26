@@ -34,17 +34,19 @@ button:hover, button:focus {
 
 input[type="text"], input[type="number"] {
     min-width: 10rem;
-    background: #353535;
+    background: #383838;
     color: #AAA;
-    border: solid 1px #393939;
+    border: solid 1px #353535;
     outline: none;
     padding: 0.2rem;
     display:inline-block;
+    transition: background 0.25s, border 0.25s, box-shadow 0.25s, color 0.25s;
 }
 
 input[type="text"]:focus, input[type="number"]:focus, input[type="text"]:hover, input[type="number"]:hover {
     color: #DDD;
     background: #404040;
+    border: solid 1px #595959;
     box-shadow: 0 11px 14px -12px rgba(20, 20, 40, 0.75);
 }
 
@@ -54,6 +56,19 @@ input[type="text"]:focus, input[type="number"]:focus, input[type="text"]:hover, 
 
 .forward-state-button {
     margin-left: 1rem;
+}
+
+.new-sequence-label {
+    display: block;
+    margin-bottom: 1rem;
+    text-align: left;
+}
+.new-sequence-label small{font-size: 0.7rem;}
+
+.new-sequence-label span:first-child {
+    display: inline-block;
+    min-width: 19rem;
+    text-align: right;
 }
 
 .state-label {
@@ -69,5 +84,8 @@ input[type="text"]:focus, input[type="number"]:focus, input[type="text"]:hover, 
 }
 
 .state-index {
-    margin: 0;
+    margin: 0 0 1rem 0;
+    padding-bottom: 1rem;
+    border-bottom: solid 1px #393939;
+    box-shadow: 0 1px 0 #272727;
 }

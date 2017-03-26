@@ -1,10 +1,10 @@
 // @flow
 
-import {StateMachine} from "./state-machine";
+import {SequentialStateMachine} from "./sequential-state-machine";
 
 let _indexCache = new WeakMap();
 
-export class IndexedStateMachine extends StateMachine {
+export class IndexedStateMachine extends SequentialStateMachine {
 
     static create() {
         return new IndexedStateMachine();
@@ -12,22 +12,22 @@ export class IndexedStateMachine extends StateMachine {
 
     constructor() {
         super();
-        this.addState = this.addState.bind(this);
-        this.moveState = this.moveState.bind(this);
+        this.addSequence = this.addSequence.bind(this);
+        this.moveToState = this.moveToState.bind(this);
         this.currentIndex = this.currentIndex.bind(this);
         this.isLastState = this.isLastState.bind(this);
         this.reset = this.reset.bind(this);
         _indexCache.set(this, 0);
     }
 
-    addState(state): Object {
-        let _state = super.addState(state, _indexCache.get(this));
+    addSequence(sequence): Object {
+        let _state = super.addSequence(sequence, _indexCache.get(this));
         _indexCache.set(this, (super.size() - 1));
         return _state;
     }
 
-    moveState(wayBackNumber: number): Object {
-        let newIndex = _indexCache.get(this) + wayBackNumber;
+    moveToState(velocity: number): Object {
+        let newIndex = _indexCache.get(this) + velocity;
         _indexCache.set(this, newIndex);
         return super.returnState(newIndex);
     }

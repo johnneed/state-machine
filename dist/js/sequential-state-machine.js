@@ -10195,9 +10195,9 @@ function render(state) {
     return state;
 }
 
-function moveState(velocity) {
+function moveToState(velocity) {
     return function () {
-        return render(myStateMachine.moveState(velocity));
+        return render(myStateMachine.moveToState(velocity));
     };
 }
 
@@ -10209,19 +10209,19 @@ function reset() {
 var addState = _ramda2.default.curry(function (key, event) {
     var newState = {};
     newState[key] = event.target.value;
-    return render(myStateMachine.addState(newState));
+    return render(myStateMachine.addSequence(newState));
 });
 
 var numStream1 = _Rx2.default.Observable.fromEvent(numberBox, "keyup");
 var numStream2 = _Rx2.default.Observable.fromEvent(numberBox, "change");
 _Rx2.default.Observable.merge(numStream1, numStream2).subscribe(addState("number"));
 _Rx2.default.Observable.fromEvent(wordBox, "keyup").subscribe(addState("word"));
-_Rx2.default.Observable.fromEvent(forwardStateButton, "click").subscribe(moveState(1));
-_Rx2.default.Observable.fromEvent(backStateButton, "click").subscribe(moveState(-1));
+_Rx2.default.Observable.fromEvent(forwardStateButton, "click").subscribe(moveToState(1));
+_Rx2.default.Observable.fromEvent(backStateButton, "click").subscribe(moveToState(-1));
 _Rx2.default.Observable.fromEvent(resetStateButton, "click").subscribe(reset);
 myStateMachine.addRule({
     number: function number(value) {
-        return !isNaN(value) && Number(value) >= 0 && Number(value) <= 100;
+        return value === "" || typeof value === "undefined" || !isNaN(value) && Number(value) >= 0 && Number(value) <= 100;
     }
 });
 myStateMachine.addRule({
@@ -10247,7 +10247,7 @@ var _get = function get(object, property, receiver) { if (object === null) objec
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _stateMachine = __webpack_require__(185);
+var _sequentialStateMachine = __webpack_require__(185);
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -10257,8 +10257,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 var _indexCache = new WeakMap();
 
-var IndexedStateMachine = exports.IndexedStateMachine = function (_StateMachine) {
-    _inherits(IndexedStateMachine, _StateMachine);
+var IndexedStateMachine = exports.IndexedStateMachine = function (_SequentialStateMachi) {
+    _inherits(IndexedStateMachine, _SequentialStateMachi);
 
     _createClass(IndexedStateMachine, null, [{
         key: "create",
@@ -10272,8 +10272,8 @@ var IndexedStateMachine = exports.IndexedStateMachine = function (_StateMachine)
 
         var _this = _possibleConstructorReturn(this, (IndexedStateMachine.__proto__ || Object.getPrototypeOf(IndexedStateMachine)).call(this));
 
-        _this.addState = _this.addState.bind(_this);
-        _this.moveState = _this.moveState.bind(_this);
+        _this.addSequence = _this.addSequence.bind(_this);
+        _this.moveToState = _this.moveToState.bind(_this);
         _this.currentIndex = _this.currentIndex.bind(_this);
         _this.isLastState = _this.isLastState.bind(_this);
         _this.reset = _this.reset.bind(_this);
@@ -10282,16 +10282,16 @@ var IndexedStateMachine = exports.IndexedStateMachine = function (_StateMachine)
     }
 
     _createClass(IndexedStateMachine, [{
-        key: "addState",
-        value: function addState(state) {
-            var _state = _get(IndexedStateMachine.prototype.__proto__ || Object.getPrototypeOf(IndexedStateMachine.prototype), "addState", this).call(this, state, _indexCache.get(this));
+        key: "addSequence",
+        value: function addSequence(sequence) {
+            var _state = _get(IndexedStateMachine.prototype.__proto__ || Object.getPrototypeOf(IndexedStateMachine.prototype), "addSequence", this).call(this, sequence, _indexCache.get(this));
             _indexCache.set(this, _get(IndexedStateMachine.prototype.__proto__ || Object.getPrototypeOf(IndexedStateMachine.prototype), "size", this).call(this) - 1);
             return _state;
         }
     }, {
-        key: "moveState",
-        value: function moveState(wayBackNumber) {
-            var newIndex = _indexCache.get(this) + wayBackNumber;
+        key: "moveToState",
+        value: function moveToState(velocity) {
+            var newIndex = _indexCache.get(this) + velocity;
             _indexCache.set(this, newIndex);
             return _get(IndexedStateMachine.prototype.__proto__ || Object.getPrototypeOf(IndexedStateMachine.prototype), "returnState", this).call(this, newIndex);
         }
@@ -10325,7 +10325,7 @@ var IndexedStateMachine = exports.IndexedStateMachine = function (_StateMachine)
     }]);
 
     return IndexedStateMachine;
-}(_stateMachine.StateMachine);
+}(_sequentialStateMachine.SequentialStateMachine);
 
 /***/ }),
 /* 185 */
@@ -10337,7 +10337,7 @@ var IndexedStateMachine = exports.IndexedStateMachine = function (_StateMachine)
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.StateMachine = undefined;
+exports.SequentialStateMachine = undefined;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -10352,12 +10352,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var _history = new WeakMap();
 
 function diffState(history, state) {
-    var currentHistory = runStateTo(history, history.length - 1);
-    var proposedHistory = runStateTo(history.concat(state), history.length);
+    var currentHistory = runTo(history, history.length - 1);
+    var proposedHistory = runTo(history.concat(state), history.length);
     return _ramda2.default.equals(currentHistory, proposedHistory);
 }
 
-function runStateTo(history, stateIndex) {
+function runTo(history, stateIndex) {
 
     function _run(index, state) {
         if (index === 0) {
@@ -10375,18 +10375,18 @@ function runStateTo(history, stateIndex) {
     return _run(stateIndex, history[0]);
 }
 
-var StateMachine = exports.StateMachine = function () {
-    _createClass(StateMachine, null, [{
+var SequentialStateMachine = exports.SequentialStateMachine = function () {
+    _createClass(SequentialStateMachine, null, [{
         key: "create",
         value: function create() {
-            return new StateMachine();
+            return new SequentialStateMachine();
         }
     }]);
 
-    function StateMachine() {
-        _classCallCheck(this, StateMachine);
+    function SequentialStateMachine() {
+        _classCallCheck(this, SequentialStateMachine);
 
-        this.addState = this.addState.bind(this);
+        this.addSequence = this.addSequence.bind(this);
         this.returnState = this.returnState.bind(this);
         this.size = this.size.bind(this);
         this.clearHistory = this.clearHistory.bind(this);
@@ -10394,25 +10394,25 @@ var StateMachine = exports.StateMachine = function () {
         _history.set(this, [{}]);
     }
 
-    _createClass(StateMachine, [{
-        key: "addState",
-        value: function addState(state, index) {
+    _createClass(SequentialStateMachine, [{
+        key: "addSequence",
+        value: function addSequence(sequence, index) {
             var myHistory = _history.get(this);
             var historyPart = myHistory.slice(0, typeof index === "number" ? index + 1 : myHistory.length);
-            if (!diffState(historyPart, state)) {
-                historyPart = historyPart.concat(state);
+            if (!diffState(historyPart, sequence)) {
+                historyPart = historyPart.concat(sequence);
                 _history.set(this, historyPart);
             }
-            return runStateTo(historyPart, historyPart.length - 1);
+            return runTo(historyPart, historyPart.length - 1);
         }
     }, {
         key: "returnState",
         value: function returnState(index) {
             var _index = index || _history.get(this).length - 1; // return the last state if no index provided
             try {
-                return runStateTo(_history.get(this), _index);
+                return runTo(_history.get(this), _index);
             } catch (err) {
-                return runStateTo(_history.get(this), _history.get(this).length - 1);
+                return runTo(_history.get(this), _history.get(this).length - 1);
             }
         }
     }, {
@@ -10424,7 +10424,7 @@ var StateMachine = exports.StateMachine = function () {
         key: "clearHistory",
         value: function clearHistory() {
             _history.set(this, [{}]);
-            return runStateTo(_history, 0);
+            return runTo(_history, 0);
         }
     }, {
         key: "destroy",
@@ -10433,7 +10433,7 @@ var StateMachine = exports.StateMachine = function () {
         }
     }]);
 
-    return StateMachine;
+    return SequentialStateMachine;
 }();
 
 /***/ }),

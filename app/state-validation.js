@@ -24,7 +24,7 @@ function _isValid(validation): boolean {
     }, true);
 }
 
-export function stateValidation(stateMachine: StateMachine): StateMachine {
+export function stateValidation(stateMachine: SequentialStateMachine): SequentialStateMachine {
     let rules = {};
     let validatedStateMachine = {
         addRule: function (rule) {

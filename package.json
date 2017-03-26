@@ -1,5 +1,5 @@
 {
-  "name": "state-machine",
+  "name": "sequential-state-machine",
   "version": "1.0.0",
   "description": "An awesome JavaScript App for exploring State",
   "main": "Gruntfile.js",

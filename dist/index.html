@@ -8,17 +8,19 @@
 </head>
 <body>
 <section id="stateInput" class="state-input">
-    <label class="state-label">
-        <span>a number : </span>
+    <label class="new-sequence-label">
+        <span>a number <small>(between 0 and 100, inclusive)</small>: </span>
         <input id="numberBox" class="state-number-box" type="number" min="0" max="100" step="1" tabindex="1" />
     </label>
-    <label class="state-label">
-        <span>a word : </span>
+    <label class="new-sequence-label">
+        <span>a word <small>(10 or fewer characters)</small>: </span>
         <input id="wordBox" class="state-number-box" type="text" tabindex="2" />
     </label>
 </section>
 <section id="stateDisplay" class="state-display">
-    <h3 class="state-index"><span class="form-is-valid" id="formIsValid"></span><span>State Index : </span><span class="state-index" id="stateIndexDisplay"></span></h3>
+    <h3 class="state-index">
+        <span id="formIsValid"></span>
+        <span>State Index : </span><span class="state-index" id="stateIndexDisplay"></span></h3>
     <span class="state-label">
         <span>a number : </span>
     <span id="numberDisplay" class="state-number-display"></span>
@@ -33,6 +35,6 @@
         <button id="forwardStateButton" class="forward-state-button" tabindex="12" >&rarr;</button>
     </span>
 </section>
-<script src="js/state-machine.js"></script>
+<script src="js/sequential-state-machine.js"></script>
 </body>
 </html>
