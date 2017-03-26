@@ -16,7 +16,7 @@
     
 5. Sign into Github or create a new Github account: https://github.com/join?source=header-home
 
-4. Navigate to where you want your code to live. In your terminal use the **cd** command to navigate to your profile folder  **cd ~/**. Create the folder if you need to **mkdir my-projects** and then navigate into that folder **cd my-projects**
+4. In your terminal program, navigate to where you want your code to live. Use the **cd** command to navigate to your profile folder  **cd ~/**. Create the folder if you need to **mkdir my-projects** and then navigate into that folder **cd my-projects**
 
 5. Clone this repository. In the Terminal type **git clone https://github.com/johnneed/state-machine.git**  Git will download this code and create a new folder called *state-machine*
 
