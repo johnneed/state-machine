@@ -16,15 +16,17 @@
     
 5. Sign into Github or create a new Github account: https://github.com/join?source=header-home
 
-4. In your terminal program, navigate to where you want your code to live. Use the **cd** command to navigate to your profile folder  **cd ~/**. Create the folder if you need to **mkdir my-projects** and then navigate into that folder **cd my-projects**
+4. In your terminal program, navigate to where you want your code to live by using the **cd** command. For instance you navigate to your profile using **cd ~/**. 
 
-5. Clone this repository. In the Terminal type **git clone https://github.com/johnneed/state-machine.git**  Git will download this code and create a new folder called *state-machine*
+5. Create a folder if you need to.  For instance you can create a folder called "my-projects" like this **mkdir my-projects** and then navigate into that folder **cd my-projects**
 
-6. Navigate into the *state-machine* folder **cd state-machine**
+6. Clone this repository. In the Terminal type **git clone https://github.com/johnneed/state-machine.git**  Git will download this code and create a new folder called *state-machine*
 
-7. Install local dependencies using Node Package Manager *npm*.  Type **npm install**
+7. Navigate into the *state-machine* folder **cd state-machine**
 
-8. We'll need a few global dependencies.  Type "npm install -g grunt-cli"  This will install the Command Line Interface for Grunt, which is the tool we use to build our application.  You may need to restart your terminal after this runs.
+8. Install local dependencies using Node Package Manager *npm*.  Type **npm install**
 
-9. Build the application.  Navigate back to *state-machine* folder if you need to and type *grunt*. This will build your application, launch a websserver and open your application in browser.
+9. We'll need a few global dependencies.  Type **npm install -g grunt-cli**  This will install the Command Line Interface for Grunt, which is the tool we use to build our application.  You may need to restart your terminal after this runs.
+
+10. Build the application.  Navigate back to *state-machine* folder if you need to and type *grunt*. This will build your application, launch a websserver and open your application in browser.
  
