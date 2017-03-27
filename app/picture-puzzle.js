@@ -14,7 +14,7 @@ let puzzlePiece6 = document.getElementById("puzzlePiece6");
 let puzzlePiece7 = document.getElementById("puzzlePiece7");
 let puzzlePiece8 = document.getElementById("puzzlePiece8");
 
-var initialState = {
+let initialState = {
     1: puzzlePiece1,
     2: puzzlePiece2,
     3: puzzlePiece3,
@@ -25,7 +25,13 @@ var initialState = {
     8: puzzlePiece8,
     9: null
 };
-var stateMachine = invariantCheck(stateValidation(SequentialStateMachine.create(initialState)));
+
+let  stateMachine = invariantCheck(stateValidation(SequentialStateMachine.create(initialState)));
+let invariantRule1 = function(state){
+    let keys = Object.keys(state);
+
+}
+
 
 function findTilePosition(state, puzzlePiece = null) {
     return Object.keys(state).find(key => {
@@ -57,6 +63,9 @@ function moveTile(puzzlePiece) {
         render(stateMachine.returnState());
     };
 }
+
+
+
 
 Rx.Observable.fromEvent(puzzlePiece1, "click").subscribe(moveTile(puzzlePiece1));
 Rx.Observable.fromEvent(puzzlePiece2, "click").subscribe(moveTile(puzzlePiece2));

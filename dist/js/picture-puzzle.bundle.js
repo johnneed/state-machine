@@ -31733,7 +31733,7 @@ var initialState = {
     8: puzzlePiece8,
     9: null
 };
-var stateMachine = (0, _stateValidation.stateValidation)(_sequentialStateMachine.SequentialStateMachine.create(initialState));
+var stateMachine = (0, _invariantCheck.invariantCheck)((0, _stateValidation.stateValidation)(_sequentialStateMachine.SequentialStateMachine.create(initialState)));
 
 function findTilePosition(state) {
     var puzzlePiece = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
