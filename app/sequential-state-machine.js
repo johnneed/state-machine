@@ -30,8 +30,8 @@ function runTo(history: Object, stateIndex: number): Object {
 
 export class SequentialStateMachine {
 
-    static create(): SequentialStateMachine {
-        return new SequentialStateMachine();
+    static create(initialState): SequentialStateMachine {
+        return new SequentialStateMachine(initialState);
     }
 
     constructor(initialState) {

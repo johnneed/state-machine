@@ -172,7 +172,7 @@ module.exports = function (grunt) {
                 //  devtool: 'cheap-module-eval-source-map',
                 entry: {
                     "form-history-with-validation": "./<%= paths.app %>/form-history-with-validation.js",
-                    "picture-puzzle.js": "./<%= paths.app %>/picture-puzzle.js"
+                    "picture-puzzle": "./<%= paths.app %>/picture-puzzle.js"
                 },
                 failOnError: true, // don't report error to grunt if webpack find errors
                 // Use this if webpack errors are tolerable and grunt should continue

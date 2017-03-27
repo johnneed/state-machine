@@ -6,8 +6,8 @@ let _indexCache = new WeakMap();
 
 export class IndexedStateMachine extends SequentialStateMachine {
 
-    static create() {
-        return new IndexedStateMachine();
+    static create(initialState) {
+        return new IndexedStateMachine(initialState);
     }
 
     constructor(initialState) {

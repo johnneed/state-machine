@@ -15,12 +15,12 @@ function _checkInvariants(rules: Object, state: Object): Object {
     }, {});
 }
 
-function _isValid(validation): boolean {
+function _isValidNewState(validation): boolean {
     return Object.keys(validation).reduce((isValid, key) => {
         if (typeof validation[key] === "boolean") {
             return isValid && validation[key];
         }
-        return isValid && _isValid(validation[key]);
+        return isValid && (typeof validation[key] === "undefined" || _isValidNewState(validation[key]));
     }, true);
 }
 
@@ -31,7 +31,7 @@ export function invariantCheck(stateMachine: SequentialStateMachine): Sequential
             rules = Object.assign({}, rules, rule);
         },
         newStateIsValid: function (state) {
-            return _isValid(state);
+            return _isValidNewState(state);
         },
         addState: function (state): boolean {
             if (this.newStateIsValid(state)) {

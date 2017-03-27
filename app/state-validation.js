@@ -20,7 +20,7 @@ function _isValid(validation): boolean {
         if (typeof validation[key] === "boolean") {
              return isValid && validation[key];
         }
-        return isValid && _isValid(validation[key]);
+        return isValid && (typeof validation[key] === "undefined" || _isValid(validation[key]));
     }, true);
 }
 

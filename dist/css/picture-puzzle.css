@@ -125,56 +125,56 @@ h1 {
     background-image: url("../images/kitten.jpg");
 }
 
-#puzzle-piece-01 {
+#puzzlePiece1 {
     background-color: #111;
     background-position: 0 0;
 
 }
 
-#puzzle-piece-02 {
+#puzzlePiece2 {
     background-color: #222;
     background-position: -100px 0;
 
 }
 
-#puzzle-piece-03 {
+#puzzlePiece3 {
     background-color: #333;
     background-position: -200px 0;
 
 }
 
-#puzzle-piece-04 {
+#puzzlePiece4 {
     background-color: #444;
     background-position: 0 -100px;
 
 }
 
-#puzzle-piece-05 {
+#puzzlePiece5 {
     background-color: #555;
     background-position: -100px -100px;
 
 }
 
-#puzzle-piece-06 {
+#puzzlePiece6 {
     background-color: #666;
     background-position: -200px -100px;
 
 }
 
-#puzzle-piece-07 {
+#puzzlePiece7 {
     background-color: #777;
     background-position: 0 -200px;
 
 
 }
 
-#puzzle-piece-08 {
+#puzzlePiece8 {
     background-color: #888;
     background-position: -100px -200px;
 
 }
 
-#puzzle-piece-09 {
+#puzzlePiece9 {
     background-color: #999;
     background-position: -200px -200px;
 

@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "/dist/";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 658);
+/******/ 	return __webpack_require__(__webpack_require__.s = 659);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -31631,7 +31631,8 @@ exports.toSubscriber = toSubscriber;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(182), __webpack_require__(186)))
 
 /***/ }),
-/* 656 */
+/* 656 */,
+/* 657 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31640,101 +31641,65 @@ exports.toSubscriber = toSubscriber;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.IndexedStateMachine = undefined;
 
-var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _sequentialStateMachine = __webpack_require__(185);
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var _indexCache = new WeakMap();
-
-var IndexedStateMachine = exports.IndexedStateMachine = function (_SequentialStateMachi) {
-    _inherits(IndexedStateMachine, _SequentialStateMachi);
-
-    _createClass(IndexedStateMachine, null, [{
-        key: "create",
-        value: function create(initialState) {
-            return new IndexedStateMachine(initialState);
+exports.invariantCheck = invariantCheck;
+function _checkInvariants(rules, state) {
+    return Object.keys(rules).reduce(function (validation, key) {
+        if (typeof rules[key] === "function") {
+            validation[key] = rules[key](state[key]);
+            return validation;
         }
-    }]);
+        if (_typeof(rules[key]) === "object" && _typeof(state[key]) === "object") {
+            validation[key] = _checkInvariants(rules[key], state[key]);
+            return validation;
+        }
+        return validation;
+    }, {});
+}
 
-    function IndexedStateMachine(initialState) {
-        _classCallCheck(this, IndexedStateMachine);
+function _isValidNewState(validation) {
+    return Object.keys(validation).reduce(function (isValid, key) {
+        if (typeof validation[key] === "boolean") {
+            return isValid && validation[key];
+        }
+        return isValid && (typeof validation[key] === "undefined" || _isValidNewState(validation[key]));
+    }, true);
+}
 
-        var _this = _possibleConstructorReturn(this, (IndexedStateMachine.__proto__ || Object.getPrototypeOf(IndexedStateMachine)).call(this, initialState || {}));
+function invariantCheck(stateMachine) {
+    var rules = {};
+    var invariantStateMachine = {
+        addInvariantRule: function addInvariantRule(rule) {
+            rules = Object.assign({}, rules, rule);
+        },
+        newStateIsValid: function newStateIsValid(state) {
+            return _isValidNewState(state);
+        },
+        addState: function addState(state) {
+            if (this.newStateIsValid(state)) {
+                stateMachine.addState(state);
+                return true;
+            }
+            return false;
+        }
 
-        _this.addSequence = _this.addSequence.bind(_this);
-        _this.moveToState = _this.moveToState.bind(_this);
-        _this.currentIndex = _this.currentIndex.bind(_this);
-        _this.isLastState = _this.isLastState.bind(_this);
-        _this.reset = _this.reset.bind(_this);
-        _indexCache.set(_this, 0);
-        return _this;
-    }
-
-    _createClass(IndexedStateMachine, [{
-        key: "addSequence",
-        value: function addSequence(sequence) {
-            var _state = _get(IndexedStateMachine.prototype.__proto__ || Object.getPrototypeOf(IndexedStateMachine.prototype), "addSequence", this).call(this, sequence, _indexCache.get(this));
-            _indexCache.set(this, _get(IndexedStateMachine.prototype.__proto__ || Object.getPrototypeOf(IndexedStateMachine.prototype), "size", this).call(this) - 1);
-            return _state;
-        }
-    }, {
-        key: "moveToState",
-        value: function moveToState(velocity) {
-            var newIndex = _indexCache.get(this) + velocity;
-            _indexCache.set(this, newIndex);
-            return _get(IndexedStateMachine.prototype.__proto__ || Object.getPrototypeOf(IndexedStateMachine.prototype), "returnState", this).call(this, newIndex);
-        }
-    }, {
-        key: "currentIndex",
-        value: function currentIndex() {
-            return _indexCache.get(this);
-        }
-    }, {
-        key: "currentState",
-        value: function currentState() {
-            return _get(IndexedStateMachine.prototype.__proto__ || Object.getPrototypeOf(IndexedStateMachine.prototype), "returnState", this).call(this, _indexCache.get(this));
-        }
-    }, {
-        key: "isLastState",
-        value: function isLastState() {
-            return _get(IndexedStateMachine.prototype.__proto__ || Object.getPrototypeOf(IndexedStateMachine.prototype), "size", this).call(this) === _indexCache.get(this) + 1;
-        }
-    }, {
-        key: "reset",
-        value: function reset() {
-            _indexCache.set(this, 0);
-            return _get(IndexedStateMachine.prototype.__proto__ || Object.getPrototypeOf(IndexedStateMachine.prototype), "clearHistory", this).call(this);
-        }
-    }, {
-        key: "destroy",
-        value: function destroy() {
-            _indexCache.delete(this);
-            _get(IndexedStateMachine.prototype.__proto__ || Object.getPrototypeOf(IndexedStateMachine.prototype), "destroy", this).call(this);
-        }
-    }]);
-
-    return IndexedStateMachine;
-}(_sequentialStateMachine.SequentialStateMachine);
+    };
+    return Object.assign({}, stateMachine, invariantStateMachine);
+}
 
 /***/ }),
-/* 657 */,
-/* 658 */
+/* 658 */,
+/* 659 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _indexedStateMachine = __webpack_require__(656);
+var _invariantCheck = __webpack_require__(657);
+
+var _stateValidation = __webpack_require__(183);
 
 var _Rx = __webpack_require__(184);
 
@@ -31744,68 +31709,73 @@ var _ramda = __webpack_require__(94);
 
 var _ramda2 = _interopRequireDefault(_ramda);
 
-var _stateValidation = __webpack_require__(183);
+var _sequentialStateMachine = __webpack_require__(185);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var numberBox = document.getElementById("numberBox");
-var wordBox = document.getElementById("wordBox");
-var truncateStateButton = document.getElementById("truncateStateButton");
-var resetStateButton = document.getElementById("resetStateButton");
-var forwardStateButton = document.getElementById("forwardStateButton");
-var backStateButton = document.getElementById("backStateButton");
-var numberDisplay = document.getElementById("numberDisplay");
-var wordDisplay = document.getElementById("wordDisplay");
-var stateIndexDisplay = document.getElementById("stateIndexDisplay");
-var formIsValid = document.getElementById("formIsValid");
-var myStateMachine = (0, _stateValidation.stateValidation)(_indexedStateMachine.IndexedStateMachine.create());
+var puzzlePiece1 = document.getElementById("puzzlePiece1");
+var puzzlePiece2 = document.getElementById("puzzlePiece2");
+var puzzlePiece3 = document.getElementById("puzzlePiece3");
+var puzzlePiece4 = document.getElementById("puzzlePiece4");
+var puzzlePiece5 = document.getElementById("puzzlePiece5");
+var puzzlePiece6 = document.getElementById("puzzlePiece6");
+var puzzlePiece7 = document.getElementById("puzzlePiece7");
+var puzzlePiece8 = document.getElementById("puzzlePiece8");
 
-function render(state) {
-    var isValid = myStateMachine.newStateIsValid();
-    numberDisplay.innerHTML = numberBox.value = isNaN(state.number) ? "" : state.number;
-    wordDisplay.innerHTML = wordBox.value = typeof state.word === "string" ? state.word : "";
-    stateIndexDisplay.innerHTML = myStateMachine.currentIndex();
-    formIsValid.innerHTML = isValid ? "&#x2714;" : "&#x2716;";
-    backStateButton.disabled = myStateMachine.currentIndex() === 0;
-    forwardStateButton.disabled = myStateMachine.isLastState();
-    return state;
+var initialState = {
+    1: puzzlePiece1,
+    2: puzzlePiece2,
+    3: puzzlePiece3,
+    4: puzzlePiece4,
+    5: puzzlePiece5,
+    6: puzzlePiece6,
+    7: puzzlePiece7,
+    8: puzzlePiece8,
+    9: null
+};
+var stateMachine = (0, _stateValidation.stateValidation)(_sequentialStateMachine.SequentialStateMachine.create(initialState));
+
+function findTilePosition(state) {
+    var puzzlePiece = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+
+    return Object.keys(state).find(function (key) {
+        return state[key] === puzzlePiece;
+    });
 }
 
-function moveToState(velocity) {
+function stateChanges(state, puzzlePiece) {
+    var emptyPosition = findTilePosition(state);
+    var tilePosition = findTilePosition(state, puzzlePiece);
+    var newState = {};
+    newState[emptyPosition] = state[tilePosition];
+    newState[tilePosition] = null;
+    return newState;
+}
+
+function render(state) {
+    Object.keys(state).forEach(function (key) {
+        if (state[key] !== null) {
+            state[key].className = "puzzle-piece position-" + key;
+        }
+    });
+}
+
+function moveTile(puzzlePiece) {
     return function () {
-        return render(myStateMachine.moveToState(velocity));
+        var currentState = stateMachine.returnState();
+        stateMachine.addSequence(stateChanges(currentState, puzzlePiece));
+        render(stateMachine.returnState());
     };
 }
 
-function reset() {
-
-    return render(myStateMachine.reset());
-}
-
-var addState = _ramda2.default.curry(function (key, event) {
-    var newState = {};
-    newState[key] = event.target.value;
-    return render(myStateMachine.addSequence(newState));
-});
-
-var numStream1 = _Rx2.default.Observable.fromEvent(numberBox, "keyup");
-var numStream2 = _Rx2.default.Observable.fromEvent(numberBox, "change");
-_Rx2.default.Observable.merge(numStream1, numStream2).subscribe(addState("number"));
-_Rx2.default.Observable.fromEvent(wordBox, "keyup").subscribe(addState("word"));
-_Rx2.default.Observable.fromEvent(forwardStateButton, "click").subscribe(moveToState(1));
-_Rx2.default.Observable.fromEvent(backStateButton, "click").subscribe(moveToState(-1));
-_Rx2.default.Observable.fromEvent(resetStateButton, "click").subscribe(reset);
-myStateMachine.addInvariantRule({
-    number: function number(value) {
-        return value === "" || typeof value === "undefined" || !isNaN(value) && Number(value) >= 0 && Number(value) <= 100;
-    }
-});
-myStateMachine.addInvariantRule({
-    word: function word(value) {
-        return (value || "").length < 10;
-    }
-});
-render(myStateMachine.returnState());
+_Rx2.default.Observable.fromEvent(puzzlePiece1, "click").subscribe(moveTile(puzzlePiece1));
+_Rx2.default.Observable.fromEvent(puzzlePiece2, "click").subscribe(moveTile(puzzlePiece2));
+_Rx2.default.Observable.fromEvent(puzzlePiece3, "click").subscribe(moveTile(puzzlePiece3));
+_Rx2.default.Observable.fromEvent(puzzlePiece4, "click").subscribe(moveTile(puzzlePiece4));
+_Rx2.default.Observable.fromEvent(puzzlePiece5, "click").subscribe(moveTile(puzzlePiece5));
+_Rx2.default.Observable.fromEvent(puzzlePiece6, "click").subscribe(moveTile(puzzlePiece6));
+_Rx2.default.Observable.fromEvent(puzzlePiece7, "click").subscribe(moveTile(puzzlePiece7));
+_Rx2.default.Observable.fromEvent(puzzlePiece8, "click").subscribe(moveTile(puzzlePiece8));
 
 /***/ })
 /******/ ]);
