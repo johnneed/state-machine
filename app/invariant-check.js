@@ -1,14 +1,14 @@
 // @flow
 
 
-function _validate(rules: Object, state: Object): Object {
+function _checkInvariants(rules: Object, state: Object): Object {
     return Object.keys(rules).reduce((validation: Object, key: string) => {
         if (typeof rules[key] === "function") {
             validation[key] = rules[key](state[key]);
             return validation;
         }
         if (typeof rules[key] === "object" && typeof state[key] === "object") {
-            validation[key] = _validate(rules[key], state[key]);
+            validation[key] = _checkInvariants(rules[key], state[key]);
             return validation;
         }
         return validation;
@@ -24,21 +24,23 @@ function _isValid(validation): boolean {
     }, true);
 }
 
-export function stateValidation(stateMachine: SequentialStateMachine): SequentialStateMachine {
+export function invariantCheck(stateMachine: SequentialStateMachine): SequentialStateMachine {
     let rules = {};
-    let validatedStateMachine = {
-        addRule: function (rule) {
+    let invariantStateMachine = {
+        addInvariantRule: function (rule) {
             rules = Object.assign({}, rules, rule);
         },
-        validate: function () {
-            let state = stateMachine.currentState();
-            return _validate(rules, state);
+        newStateIsValid: function (state) {
+            return _isValid(state);
         },
-        isValid: function(){
-            return _isValid(this.validate());
+        addState: function (state): boolean {
+            if (this.newStateIsValid(state)) {
+                stateMachine.addState(state);
+                return true
+            }
+            return false;
         }
 
     };
-    return Object.assign({}, stateMachine, validatedStateMachine);
-
+    return Object.assign({}, stateMachine, invariantStateMachine);
 }
