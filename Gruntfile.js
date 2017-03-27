@@ -201,7 +201,7 @@ module.exports = function (grunt) {
                 output: {
                     path: "<%= paths.dist %>",
                     publicPath: "/dist/",
-                    filename: "[name].bundle.js",
+                    filename: "js/[name].bundle.js",
                     chunkFilename: "[id].bundle.js"
                 },
                 plugins: [

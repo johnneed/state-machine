@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "/dist/";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 382);
+/******/ 	return __webpack_require__(__webpack_require__.s = 383);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -11878,22 +11878,80 @@ module.exports = _curry3(function zipWith(fn, a, b) {
 /* 377 */,
 /* 378 */,
 /* 379 */,
-/* 380 */,
-/* 381 */,
-/* 382 */
+/* 380 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _invariantCheckntCheck = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"./invariant-checknt-check\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+exports.invariantCheck = invariantCheck;
+function _checkInvariants(rules, state) {
+    return Object.keys(rules).reduce(function (validation, key) {
+        if (typeof rules[key] === "function") {
+            validation[key] = rules[key](state[key]);
+            return validation;
+        }
+        if (_typeof(rules[key]) === "object" && _typeof(state[key]) === "object") {
+            validation[key] = _checkInvariants(rules[key], state[key]);
+            return validation;
+        }
+        return validation;
+    }, {});
+}
+
+function _isValid(validation) {
+    return Object.keys(validation).reduce(function (isValid, key) {
+        if (typeof validation[key] === "boolean") {
+            return isValid && validation[key];
+        }
+        return isValid && _isValid(validation[key]);
+    }, true);
+}
+
+function invariantCheck(stateMachine) {
+    var rules = {};
+    var invariantStateMachine = {
+        addInvariantRule: function addInvariantRule(rule) {
+            rules = Object.assign({}, rules, rule);
+        },
+        newStateIsValid: function newStateIsValid(state) {
+            return _isValid(state);
+        },
+        addState: function addState(state) {
+            if (this.newStateIsValid(state)) {
+                stateMachine.addState(state);
+                return true;
+            }
+            return false;
+        }
+
+    };
+    return Object.assign({}, stateMachine, invariantStateMachine);
+}
+
+/***/ }),
+/* 381 */,
+/* 382 */,
+/* 383 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _invariantCheck = __webpack_require__(380);
 
 var _stateValidation = __webpack_require__(134);
 
 var _sequentialStateMachine = __webpack_require__(145);
 
 var intialState = { 1: 1, 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7, 8: 8, 9: null };
-var stateMachine = (0, _invariantCheckntCheck.invariantCheck)(stateValdiation(_sequentialStateMachine.SequentialStateMachine.create(initialState)));
+var stateMachine = (0, _invariantCheck.invariantCheck)(stateValdiation(_sequentialStateMachine.SequentialStateMachine.create(initialState)));
 
 function findTilePosition(state) {
     var tileNumber = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
