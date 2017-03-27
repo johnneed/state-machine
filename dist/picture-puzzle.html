@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8"/>
+    <link href="https://fonts.googleapis.com/css?family=Space+Mono" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="css/picture-puzzle.css"/>
+</head>
+<body>
+<div class="puzzle" id="puzzle">
+    <div class="puzzle-piece position-1" id="puzzle-piece-01"></div>
+    <div class="puzzle-piece position-2" id="puzzle-piece-02"></div>
+    <div class="puzzle-piece position-3" id="puzzle-piece-03"></div>
+    <div class="puzzle-piece position-4" id="puzzle-piece-04"></div>
+    <div class="puzzle-piece position-5" id="puzzle-piece-05"></div>
+    <div class="puzzle-piece position-6" id="puzzle-piece-06"></div>
+    <div class="puzzle-piece position-7" id="puzzle-piece-07"></div>
+    <div class="puzzle-piece position-8" id="puzzle-piece-08"></div>
+<!--
+    <div class="puzzle-piece position-9" id="puzzle-piece-09"></div>
+-->
+</div>
+<section id="stateDisplay" class="state-display">
+    <h3 class="state-index">
+        <span id="formIsValid"></span>
+        <span>Move # : </span><span class="state-index" id="stateIndexDisplay"></span></h3>
+
+    <span class="controls">
+        <button id="backStateButton" class="back-state-button" tabindex="10">&larr;</button>
+        <button id="resetStateButton" class="reset-state-button" tabindex="11">Reset</button>
+        <button id="forwardStateButton" class="forward-state-button" tabindex="12">&rarr;</button>
+    </span>
+    <script src="js/picture-puzzle.js"></script>
+</body>
+</html>
