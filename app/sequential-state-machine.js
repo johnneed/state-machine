@@ -34,13 +34,13 @@ export class SequentialStateMachine {
         return new SequentialStateMachine();
     }
 
-    constructor() {
+    constructor(initialState) {
         this.addSequence = this.addSequence.bind(this);
         this.returnState = this.returnState.bind(this);
         this.size = this.size.bind(this);
         this.clearHistory = this.clearHistory.bind(this);
         this.destroy = this.destroy.bind(this);
-        _history.set(this, [{}]);
+        _history.set(this, [(initialState || {})]);
     }
 
     addSequence(sequence, index): Object {

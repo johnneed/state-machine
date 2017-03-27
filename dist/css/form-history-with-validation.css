@@ -39,7 +39,7 @@ input[type="text"], input[type="number"] {
     border: solid 1px #353535;
     outline: none;
     padding: 0.2rem;
-    display:inline-block;
+    display: inline-block;
     transition: background 0.25s, border 0.25s, box-shadow 0.25s, color 0.25s;
 }
 
@@ -63,7 +63,10 @@ input[type="text"]:focus, input[type="number"]:focus, input[type="text"]:hover, 
     margin-bottom: 1rem;
     text-align: left;
 }
-.new-sequence-label small{font-size: 0.7rem;}
+
+.new-sequence-label small {
+    font-size: 0.7rem;
+}
 
 .new-sequence-label span:first-child {
     display: inline-block;
@@ -90,3 +93,10 @@ input[type="text"]:focus, input[type="number"]:focus, input[type="text"]:hover, 
     box-shadow: 0 1px 0 #272727;
 }
 
+h1 {
+    text-align: center;
+    margin: 0 0 1rem 0;
+    padding-bottom: 1rem;
+    border-bottom: solid 1px #393939;
+    box-shadow: 0 1px 0 #272727;
+}

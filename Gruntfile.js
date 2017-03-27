@@ -7,7 +7,7 @@
 // If you want to recursively match all subfolders, use:
 // 'test/spec/**/*.js'
 
- const path = require("path");
+const path = require("path");
 // const webpack = require("webpack");
 
 module.exports = function (grunt) {
@@ -170,7 +170,10 @@ module.exports = function (grunt) {
             dev: {
                 // webpack options
                 //  devtool: 'cheap-module-eval-source-map',
-                entry: ["./<%= paths.app %>/app.js"],
+                entry: {
+                    "form-history-with-validation": "./<%= paths.app %>/form-history-with-validation.js",
+                    "picture-puzzle.js": "./<%= paths.app %>/picture-puzzle.js"
+                },
                 failOnError: true, // don't report error to grunt if webpack find errors
                 // Use this if webpack errors are tolerable and grunt should continue
                 // hot: true, // adds the HotModuleReplacementPlugin and switch the server to hot mode
@@ -198,7 +201,8 @@ module.exports = function (grunt) {
                 output: {
                     path: "<%= paths.dist %>",
                     publicPath: "/dist/",
-                    filename: `js/${pkg.name}.js`
+                    filename: "[name].bundle.js",
+                    chunkFilename: "[id].bundle.js"
                 },
                 plugins: [
                     // new webpack.optimize.OccurenceOrderPlugin(),

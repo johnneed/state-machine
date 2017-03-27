@@ -10,8 +10,8 @@ export class IndexedStateMachine extends SequentialStateMachine {
         return new IndexedStateMachine();
     }
 
-    constructor() {
-        super();
+    constructor(initialState) {
+        super(initialState || {});
         this.addSequence = this.addSequence.bind(this);
         this.moveToState = this.moveToState.bind(this);
         this.currentIndex = this.currentIndex.bind(this);
