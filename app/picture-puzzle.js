@@ -26,12 +26,15 @@ let initialState = {
     9: null
 };
 
-let  stateMachine = invariantCheck(stateValidation(SequentialStateMachine.create(initialState)));
-let invariantRule1 = function(state){
-    let keys = Object.keys(state);
+let stateMachine = invariantCheck(stateValidation(SequentialStateMachine.create(initialState)));
 
+function invariantRule1(state) {
+    let keys = Object.keys(state);
+    let distance = Math.abs(keys[0] - keys[1]);
+    return distance === 1 || distance === 3;
 }
 
+stateMachine.addInvariantRule(invariantRule1);
 
 function findTilePosition(state, puzzlePiece = null) {
     return Object.keys(state).find(key => {
@@ -59,12 +62,13 @@ function render(state) {
 function moveTile(puzzlePiece) {
     return function () {
         let currentState = stateMachine.returnState();
-        stateMachine.addSequence(stateChanges(currentState, puzzlePiece));
-        render(stateMachine.returnState());
+        let newState = stateChanges(currentState, puzzlePiece);
+        if (stateMachine.newStateIsValid(newState)) {
+            stateMachine.addSequence(newState);
+            render(stateMachine.returnState());
+        }
     };
 }
-
-
 
 
 Rx.Observable.fromEvent(puzzlePiece1, "click").subscribe(moveTile(puzzlePiece1));

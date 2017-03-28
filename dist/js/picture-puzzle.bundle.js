@@ -31641,41 +31641,21 @@ exports.toSubscriber = toSubscriber;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
 exports.invariantCheck = invariantCheck;
-function _checkInvariants(rules, state) {
-    return Object.keys(rules).reduce(function (validation, key) {
-        if (typeof rules[key] === "function") {
-            validation[key] = rules[key](state[key]);
-            return validation;
-        }
-        if (_typeof(rules[key]) === "object" && _typeof(state[key]) === "object") {
-            validation[key] = _checkInvariants(rules[key], state[key]);
-            return validation;
-        }
-        return validation;
-    }, {});
-}
-
-function _isValidNewState(validation) {
-    return Object.keys(validation).reduce(function (isValid, key) {
-        if (typeof validation[key] === "boolean") {
-            return isValid && validation[key];
-        }
-        return isValid && (typeof validation[key] === "undefined" || _isValidNewState(validation[key]));
+function _isValidNewState(rules, state) {
+    return rules.reduce(function (isValid, rule) {
+        return isValid && rule(state);
     }, true);
 }
 
 function invariantCheck(stateMachine) {
-    var rules = {};
+    var rules = [];
     var invariantStateMachine = {
         addInvariantRule: function addInvariantRule(rule) {
-            rules = Object.assign({}, rules, rule);
+            rules = rules.concat(rule);
         },
         newStateIsValid: function newStateIsValid(state) {
-            return _isValidNewState(state);
+            return _isValidNewState(rules, state);
         },
         addState: function addState(state) {
             if (this.newStateIsValid(state)) {
@@ -31735,9 +31715,14 @@ var initialState = {
 };
 
 var stateMachine = (0, _invariantCheck.invariantCheck)((0, _stateValidation.stateValidation)(_sequentialStateMachine.SequentialStateMachine.create(initialState)));
-var invariantRule1 = function invariantRule1(state) {
+
+function invariantRule1(state) {
     var keys = Object.keys(state);
-};
+    var distance = Math.abs(keys[0] - keys[1]);
+    return distance === 1 || distance === 3;
+}
+
+stateMachine.addInvariantRule(invariantRule1);
 
 function findTilePosition(state) {
     var puzzlePiece = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
@@ -31767,8 +31752,11 @@ function render(state) {
 function moveTile(puzzlePiece) {
     return function () {
         var currentState = stateMachine.returnState();
-        stateMachine.addSequence(stateChanges(currentState, puzzlePiece));
-        render(stateMachine.returnState());
+        var newState = stateChanges(currentState, puzzlePiece);
+        if (stateMachine.newStateIsValid(newState)) {
+            stateMachine.addSequence(newState);
+            render(stateMachine.returnState());
+        }
     };
 }
 
