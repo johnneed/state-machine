@@ -1,6 +1,7 @@
 import {invariantCheck} from "./invariant-check";
 import {stateValidation} from "./state-validation";
 import {default as Rx} from "rxjs/Rx";
+import {default as R} from "ramda";
 import {IndexedStateMachine} from "./indexed-state-machine";
 
 let puzzlePiece1 = document.getElementById("puzzlePiece1");
@@ -31,49 +32,53 @@ let stateMachine = invariantCheck(stateValidation(IndexedStateMachine.create(ini
  * @param move
  * @returns {boolean}
  */
-function isValidMove(move: object): boolean {
+function isValidMove(puzzleWidth: number, move: object): boolean {
     let keys = Object.keys(move);
     let distance = Math.abs(keys[0] - keys[1]);
-    return distance === 1 || distance === 3;
+
+    function isInSameRow(move: Object): boolean {
+
+    }
+
+    return distance === 3 || (distance === 1 || && isInSameRow(move));
 }
 
 
-function hasEvenTileInverions(state: object):boolean {
-    let pieceOrder = Object.keys(initialState).filter(key => initialState[key] !== null).reduce((wmap, key) =>{
+function validateTileInversions(puzzleWidth: number, state: object): boolean {
+    let pieceOrder = Object.keys(initialState).filter(key => initialState[key] !== null).reduce((wmap, key) => {
         wmap.set(initialState[key], key);
         return wmap;
-    },(new WeakMap()));
+    }, (new WeakMap()));
     let tilePositions = Object.keys(state).sort().filter(key => state[key] !== null).map(key => pieceOrder.get(state[key]));
-    function countInversions(numArr:number[]):number{
+
+    function countInversions(numArr: number[], _puzzleWidth: number): number {
         let count;
-        if (numArr.length <= 1){
+        if (numArr.length <= 1) {
             return 0;
         }
-        count = numArr.filter(num => numArr[0] > num).length + countInversions(numArr.slice(1));
-        return (count/2) === Math.floor(count/2);
+        count = numArr.filter(num => numArr[0] > num).length + countInversions(numArr.slice(1), _puzzleWidth);
+        return (count / (_puzzleWidth - 1)) === Math.floor(count / (_puzzleWidth - 1));
     }
-    console.log(JSON.stringify(tilePositions));
-    let count = countInversions(tilePositions);
-    console.log(count);
-    return true;
+
+    return countInversions(tilePositions, puzzleWidth);
 }
 
+stateMachine.addInvariantRule(R.curry(validateTileInversions)(3));
 
-stateMachine.addInvariantRule(hasEvenTileInverions);
-
-function findTilePosition(state, puzzlePiece = null) {
+function findTilePosition(state: Object, puzzlePiece = null): object {
     return Object.keys(state).find(key => {
         return state[key] === puzzlePiece;
     });
 }
 
-function stateChanges(state, puzzlePiece) {
+function computeMove(state, puzzlePiece): Object {
     let emptyPosition = findTilePosition(state);
     let tilePosition = findTilePosition(state, puzzlePiece);
-    let newState = {};
-    newState[emptyPosition] = state[tilePosition];
-    newState[tilePosition] = null;
-    return newState;
+    let move = {};
+    move[emptyPosition] = state[tilePosition];
+    move[tilePosition] = null;
+    return move;
+
 }
 
 function render(state: object): void {
@@ -84,17 +89,17 @@ function render(state: object): void {
     });
 }
 
-function moveTile(puzzlePiece) {
+function moveTile(puzzleWidth:Number, puzzlePiece: Object): void {
     return function () {
         let currentState = stateMachine.returnState();
-        let newState = stateChanges(currentState, puzzlePiece);
-        stateMachine.addSequence(newState);
-        if (stateMachine.newStateIsValid(stateMachine.currentState())) {
+        let move = computeMove(currentState, puzzlePiece);
+        if (isValidMove(puzzleWidth, move)) {
+            stateMachine.addSequence(move);
             return render(stateMachine.returnState());
         }
-        stateMachine.returnState(-1);
     };
 }
+
 
 
 Rx.Observable.fromEvent(puzzlePiece1, "click").subscribe(moveTile(puzzlePiece1));
