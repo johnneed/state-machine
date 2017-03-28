@@ -15,7 +15,9 @@ export class IndexedStateMachine extends SequentialStateMachine {
         this.addSequence = this.addSequence.bind(this);
         this.moveToState = this.moveToState.bind(this);
         this.currentIndex = this.currentIndex.bind(this);
+        this.currentState = this.currentState.bind(this);
         this.isLastState = this.isLastState.bind(this);
+        this.destroy = this.destroy.bind(this);
         this.reset = this.reset.bind(this);
         _indexCache.set(this, 0);
     }

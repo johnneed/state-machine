@@ -1,9 +1,7 @@
 import {invariantCheck} from "./invariant-check";
 import {stateValidation} from "./state-validation";
 import {default as Rx} from "rxjs/Rx";
-import {default as R} from "ramda";
-
-import {SequentialStateMachine} from "./sequential-state-machine";
+import {IndexedStateMachine} from "./indexed-state-machine";
 
 let puzzlePiece1 = document.getElementById("puzzlePiece1");
 let puzzlePiece2 = document.getElementById("puzzlePiece2");
@@ -26,7 +24,7 @@ let initialState = {
     9: null
 };
 
-let stateMachine = invariantCheck(stateValidation(SequentialStateMachine.create(initialState)));
+let stateMachine = invariantCheck(stateValidation(IndexedStateMachine.create(initialState)));
 
 /**
  * Checks a move to see if it's valid in 3x3 puzzle
@@ -41,9 +39,23 @@ function isValidMove(move: object): boolean {
 
 
 function hasEvenTileInverions(state: object):boolean {
-    let pieceOrder = Object.keys(initialState).reduce((key,wmap) =>{
+    let pieceOrder = Object.keys(initialState).filter(key => initialState[key] !== null).reduce((wmap, key) =>{
         wmap.set(initialState[key], key);
+        return wmap;
     },(new WeakMap()));
+    let tilePositions = Object.keys(state).sort().filter(key => state[key] !== null).map(key => pieceOrder.get(state[key]));
+    function countInversions(numArr:number[]):number{
+        let count;
+        if (numArr.length <= 1){
+            return 0;
+        }
+        count = numArr.filter(num => numArr[0] > num).length + countInversions(numArr.slice(1));
+        return (count/2) === Math.floor(count/2);
+    }
+    console.log(JSON.stringify(tilePositions));
+    let count = countInversions(tilePositions);
+    console.log(count);
+    return true;
 }
 
 
@@ -77,7 +89,7 @@ function moveTile(puzzlePiece) {
         let currentState = stateMachine.returnState();
         let newState = stateChanges(currentState, puzzlePiece);
         stateMachine.addSequence(newState);
-        if (stateMachine.newStateIsValid(newState)) {
+        if (stateMachine.newStateIsValid(stateMachine.currentState())) {
             return render(stateMachine.returnState());
         }
         stateMachine.returnState(-1);
