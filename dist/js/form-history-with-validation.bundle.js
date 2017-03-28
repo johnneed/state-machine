@@ -10199,7 +10199,7 @@ function stateValidation(stateMachine) {
             return _validate(rules, state);
         },
         isValid: function isValid() {
-            return _isValid(this.validateInvariants());
+            return _isValid(this.validate());
         }
 
     };
@@ -31761,7 +31761,7 @@ var formIsValid = document.getElementById("formIsValid");
 var myStateMachine = (0, _stateValidation.stateValidation)(_indexedStateMachine.IndexedStateMachine.create());
 
 function render(state) {
-    var isValid = myStateMachine.newStateIsValid();
+    var isValid = myStateMachine.isValid();
     numberDisplay.innerHTML = numberBox.value = isNaN(state.number) ? "" : state.number;
     wordDisplay.innerHTML = wordBox.value = typeof state.word === "string" ? state.word : "";
     stateIndexDisplay.innerHTML = myStateMachine.currentIndex();
@@ -31795,12 +31795,12 @@ _Rx2.default.Observable.fromEvent(wordBox, "keyup").subscribe(addState("word"));
 _Rx2.default.Observable.fromEvent(forwardStateButton, "click").subscribe(moveToState(1));
 _Rx2.default.Observable.fromEvent(backStateButton, "click").subscribe(moveToState(-1));
 _Rx2.default.Observable.fromEvent(resetStateButton, "click").subscribe(reset);
-myStateMachine.addInvariantRule({
+myStateMachine.addRule({
     number: function number(value) {
         return value === "" || typeof value === "undefined" || !isNaN(value) && Number(value) >= 0 && Number(value) <= 100;
     }
 });
-myStateMachine.addInvariantRule({
+myStateMachine.addRule({
     word: function word(value) {
         return (value || "").length < 10;
     }

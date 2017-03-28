@@ -16,7 +16,7 @@ const formIsValid = document.getElementById("formIsValid");
 const myStateMachine = stateValidation(IndexedStateMachine.create());
 
 function render(state) {
-    let isValid = myStateMachine.newStateIsValid();
+    let isValid = myStateMachine.isValid();
     numberDisplay.innerHTML = numberBox.value = isNaN(state.number) ? "" : state.number;
     wordDisplay.innerHTML = wordBox.value = typeof state.word === "string" ? state.word : "";
     stateIndexDisplay.innerHTML = myStateMachine.currentIndex();
@@ -50,12 +50,12 @@ Rx.Observable.fromEvent(wordBox, "keyup").subscribe(addState("word"));
 Rx.Observable.fromEvent(forwardStateButton, "click").subscribe(moveToState(1));
 Rx.Observable.fromEvent(backStateButton, "click").subscribe(moveToState(-1));
 Rx.Observable.fromEvent(resetStateButton, "click").subscribe(reset);
-myStateMachine.addInvariantRule({
+myStateMachine.addRule({
     number: function (value) {
         return value === "" || typeof value === "undefined" || (!isNaN(value) && Number(value) >= 0 && Number(value) <= 100);
     }
 });
-myStateMachine.addInvariantRule({
+myStateMachine.addRule({
     word: function (value) {
         return (value || "").length < 10;
     }

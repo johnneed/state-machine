@@ -35,7 +35,7 @@ export function stateValidation(stateMachine: SequentialStateMachine): Sequentia
             return _validate(rules, state);
         },
         isValid: function(){
-            return _isValid(this.validateInvariants());
+            return _isValid(this.validate());
         }
 
     };

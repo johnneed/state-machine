@@ -10199,7 +10199,7 @@ function stateValidation(stateMachine) {
             return _validate(rules, state);
         },
         isValid: function isValid() {
-            return _isValid(this.validateInvariants());
+            return _isValid(this.validate());
         }
 
     };
@@ -31733,7 +31733,11 @@ var initialState = {
     8: puzzlePiece8,
     9: null
 };
+
 var stateMachine = (0, _invariantCheck.invariantCheck)((0, _stateValidation.stateValidation)(_sequentialStateMachine.SequentialStateMachine.create(initialState)));
+var invariantRule1 = function invariantRule1(state) {
+    var keys = Object.keys(state);
+};
 
 function findTilePosition(state) {
     var puzzlePiece = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
