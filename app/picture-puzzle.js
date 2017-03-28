@@ -25,6 +25,7 @@ let initialState = {
     9: null
 };
 
+
 let stateMachine = invariantCheck(stateValidation(IndexedStateMachine.create(initialState)));
 
 /**
@@ -36,11 +37,11 @@ function isValidMove(puzzleWidth: number, move: object): boolean {
     let keys = Object.keys(move);
     let distance = Math.abs(keys[0] - keys[1]);
 
-    function isInSameRow(move: Object): boolean {
-
+    function isInSameRow(pos1: number, pos2: number, puzzleWidth: number): boolean {
+        return Math.floor((pos1 - 1) / puzzleWidth) === Math.floor((pos2 - 1) / puzzleWidth);
     }
 
-    return distance === 3 || (distance === 1 || && isInSameRow(move));
+    return distance === 3 || (distance === 1 && isInSameRow(keys[0], keys[1], puzzleWidth));
 }
 
 
@@ -89,7 +90,7 @@ function render(state: object): void {
     });
 }
 
-function moveTile(puzzleWidth:Number, puzzlePiece: Object): void {
+function _moveTile(puzzleWidth: Number, puzzlePiece: Object): void {
     return function () {
         let currentState = stateMachine.returnState();
         let move = computeMove(currentState, puzzlePiece);
@@ -100,6 +101,7 @@ function moveTile(puzzleWidth:Number, puzzlePiece: Object): void {
     };
 }
 
+let moveTile = R.curry(_moveTile)(3);
 
 
 Rx.Observable.fromEvent(puzzlePiece1, "click").subscribe(moveTile(puzzlePiece1));
