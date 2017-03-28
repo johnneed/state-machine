@@ -28,13 +28,26 @@ let initialState = {
 
 let stateMachine = invariantCheck(stateValidation(SequentialStateMachine.create(initialState)));
 
-function invariantRule1(state) {
-    let keys = Object.keys(state);
+/**
+ * Checks a move to see if it's valid in 3x3 puzzle
+ * @param move
+ * @returns {boolean}
+ */
+function isValidMove(move: object): boolean {
+    let keys = Object.keys(move);
     let distance = Math.abs(keys[0] - keys[1]);
     return distance === 1 || distance === 3;
 }
 
-stateMachine.addInvariantRule(invariantRule1);
+
+function hasEvenTileInverions(state: object):boolean {
+    let pieceOrder = Object.keys(initialState).reduce((key,wmap) =>{
+        wmap.set(initialState[key], key);
+    },(new WeakMap()));
+}
+
+
+stateMachine.addInvariantRule(hasEvenTileInverions);
 
 function findTilePosition(state, puzzlePiece = null) {
     return Object.keys(state).find(key => {
@@ -51,7 +64,7 @@ function stateChanges(state, puzzlePiece) {
     return newState;
 }
 
-function render(state) {
+function render(state: object): void {
     Object.keys(state).forEach(key => {
         if (state[key] !== null) {
             state[key].className = `puzzle-piece position-${key}`;
@@ -63,10 +76,11 @@ function moveTile(puzzlePiece) {
     return function () {
         let currentState = stateMachine.returnState();
         let newState = stateChanges(currentState, puzzlePiece);
+        stateMachine.addSequence(newState);
         if (stateMachine.newStateIsValid(newState)) {
-            stateMachine.addSequence(newState);
-            render(stateMachine.returnState());
+            return render(stateMachine.returnState());
         }
+        stateMachine.returnState(-1);
     };
 }
 

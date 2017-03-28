@@ -28,8 +28,11 @@ export class IndexedStateMachine extends SequentialStateMachine {
 
     moveToState(velocity: number): Object {
         let newIndex = _indexCache.get(this) + velocity;
-        _indexCache.set(this, newIndex);
-        return super.returnState(newIndex);
+        if (newIndex >= 0 && newIndex < this.size()) {
+            _indexCache.set(this, newIndex);
+            return super.returnState(newIndex);
+        }
+        return super.returnState(_indexCache.get(this));
     }
 
     currentIndex(): number {

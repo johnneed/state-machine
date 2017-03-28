@@ -31716,13 +31716,20 @@ var initialState = {
 
 var stateMachine = (0, _invariantCheck.invariantCheck)((0, _stateValidation.stateValidation)(_sequentialStateMachine.SequentialStateMachine.create(initialState)));
 
-function invariantRule1(state) {
-    var keys = Object.keys(state);
+/**
+ * Checks a move to see if it's valid in 3x3 puzzle
+ * @param move
+ * @returns {boolean}
+ */
+function isValidMove(move) {
+    var keys = Object.keys(move);
     var distance = Math.abs(keys[0] - keys[1]);
     return distance === 1 || distance === 3;
 }
 
-stateMachine.addInvariantRule(invariantRule1);
+function isValidPuzzleState(state) {}
+
+stateMachine.addInvariantRule(isValidPuzzleState);
 
 function findTilePosition(state) {
     var puzzlePiece = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
@@ -31753,10 +31760,11 @@ function moveTile(puzzlePiece) {
     return function () {
         var currentState = stateMachine.returnState();
         var newState = stateChanges(currentState, puzzlePiece);
+        stateMachine.addSequence(newState);
         if (stateMachine.newStateIsValid(newState)) {
-            stateMachine.addSequence(newState);
-            render(stateMachine.returnState());
+            return render(stateMachine.returnState());
         }
+        stateMachine.returnState(-1);
     };
 }
 
