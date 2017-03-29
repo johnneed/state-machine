@@ -31801,6 +31801,10 @@ var puzzlePiece5 = document.getElementById("puzzlePiece5");
 var puzzlePiece6 = document.getElementById("puzzlePiece6");
 var puzzlePiece7 = document.getElementById("puzzlePiece7");
 var puzzlePiece8 = document.getElementById("puzzlePiece8");
+var resetStateButton = document.getElementById("resetStateButton");
+var forwardStateButton = document.getElementById("forwardStateButton");
+var backStateButton = document.getElementById("backStateButton");
+var stateIndexDisplay = document.getElementById("stateIndexDisplay");
 
 var initialState = {
     1: puzzlePiece1,
@@ -31879,11 +31883,23 @@ function computeMove(state, puzzlePiece) {
 }
 
 function render(state) {
+    var index = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+
     Object.keys(state).forEach(function (key) {
         if (state[key] !== null) {
             state[key].className = "puzzle-piece position-" + key;
         }
     });
+
+    stateIndexDisplay.innerHTML = index;
+}
+
+function reset() {}
+
+function moveToState(velocity) {
+    return function () {
+        return render(stateMachine.moveToState(velocity), stateMachine.currentIndex());
+    };
 }
 
 function _moveTile(puzzleWidth, puzzlePiece) {
@@ -31892,12 +31908,14 @@ function _moveTile(puzzleWidth, puzzlePiece) {
         var move = computeMove(currentState, puzzlePiece);
         if (isValidMove(puzzleWidth, move)) {
             stateMachine.addSequence(move);
-            return render(stateMachine.returnState());
+            return render(stateMachine.returnState(), stateMachine.currentIndex());
         }
     };
 }
 
 var moveTile = _ramda2.default.curry(_moveTile)(3);
+
+render(stateMachine.returnState(), stateMachine.currentIndex());
 
 _Rx2.default.Observable.fromEvent(puzzlePiece1, "click").subscribe(moveTile(puzzlePiece1));
 _Rx2.default.Observable.fromEvent(puzzlePiece2, "click").subscribe(moveTile(puzzlePiece2));
@@ -31907,6 +31925,9 @@ _Rx2.default.Observable.fromEvent(puzzlePiece5, "click").subscribe(moveTile(puzz
 _Rx2.default.Observable.fromEvent(puzzlePiece6, "click").subscribe(moveTile(puzzlePiece6));
 _Rx2.default.Observable.fromEvent(puzzlePiece7, "click").subscribe(moveTile(puzzlePiece7));
 _Rx2.default.Observable.fromEvent(puzzlePiece8, "click").subscribe(moveTile(puzzlePiece8));
+_Rx2.default.Observable.fromEvent(forwardStateButton, "click").subscribe(moveToState(1));
+_Rx2.default.Observable.fromEvent(backStateButton, "click").subscribe(moveToState(-1));
+_Rx2.default.Observable.fromEvent(resetStateButton, "click").subscribe(reset);
 
 /***/ })
 /******/ ]);

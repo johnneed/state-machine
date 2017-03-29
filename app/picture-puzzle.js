@@ -12,6 +12,10 @@ let puzzlePiece5 = document.getElementById("puzzlePiece5");
 let puzzlePiece6 = document.getElementById("puzzlePiece6");
 let puzzlePiece7 = document.getElementById("puzzlePiece7");
 let puzzlePiece8 = document.getElementById("puzzlePiece8");
+const resetStateButton = document.getElementById("resetStateButton");
+const forwardStateButton = document.getElementById("forwardStateButton");
+const backStateButton = document.getElementById("backStateButton");
+const stateIndexDisplay = document.getElementById("stateIndexDisplay");
 
 let initialState = {
     1: puzzlePiece1,
@@ -82,12 +86,23 @@ function computeMove(state, puzzlePiece): Object {
 
 }
 
-function render(state: object): void {
+function render(state: object, index = 0): void {
     Object.keys(state).forEach(key => {
         if (state[key] !== null) {
             state[key].className = `puzzle-piece position-${key}`;
         }
     });
+
+    stateIndexDisplay.innerHTML = index;
+}
+
+
+function reset(){}
+
+function moveToState(velocity) {
+    return function () {
+        return render(stateMachine.moveToState(velocity), stateMachine.currentIndex());
+    }
 }
 
 function _moveTile(puzzleWidth: Number, puzzlePiece: Object): void {
@@ -96,13 +111,15 @@ function _moveTile(puzzleWidth: Number, puzzlePiece: Object): void {
         let move = computeMove(currentState, puzzlePiece);
         if (isValidMove(puzzleWidth, move)) {
             stateMachine.addSequence(move);
-            return render(stateMachine.returnState());
+            return render(stateMachine.returnState(), stateMachine.currentIndex());
         }
     };
 }
 
+
 let moveTile = R.curry(_moveTile)(3);
 
+render(stateMachine.returnState(), stateMachine.currentIndex());
 
 Rx.Observable.fromEvent(puzzlePiece1, "click").subscribe(moveTile(puzzlePiece1));
 Rx.Observable.fromEvent(puzzlePiece2, "click").subscribe(moveTile(puzzlePiece2));
@@ -112,4 +129,7 @@ Rx.Observable.fromEvent(puzzlePiece5, "click").subscribe(moveTile(puzzlePiece5))
 Rx.Observable.fromEvent(puzzlePiece6, "click").subscribe(moveTile(puzzlePiece6));
 Rx.Observable.fromEvent(puzzlePiece7, "click").subscribe(moveTile(puzzlePiece7));
 Rx.Observable.fromEvent(puzzlePiece8, "click").subscribe(moveTile(puzzlePiece8));
+Rx.Observable.fromEvent(forwardStateButton, "click").subscribe(moveToState(1));
+Rx.Observable.fromEvent(backStateButton, "click").subscribe(moveToState(-1));
+Rx.Observable.fromEvent(resetStateButton, "click").subscribe(reset);
 

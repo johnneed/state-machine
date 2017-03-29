@@ -31754,8 +31754,7 @@ var _stateValidation = __webpack_require__(184);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var numberBox = document.getElementById("numberBox");
-var wordBox = document.getElementById("wordBox");
-var truncateStateButton = document.getElementById("truncateStateButton");
+var wordBox = document.getElementById("wordBox");;
 var resetStateButton = document.getElementById("resetStateButton");
 var forwardStateButton = document.getElementById("forwardStateButton");
 var backStateButton = document.getElementById("backStateButton");

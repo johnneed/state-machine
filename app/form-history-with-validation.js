@@ -4,8 +4,7 @@ import {default as R} from "ramda";
 import {stateValidation} from "./state-validation";
 
 const numberBox = document.getElementById("numberBox");
-const wordBox = document.getElementById("wordBox");
-const truncateStateButton = document.getElementById("truncateStateButton");
+const wordBox = document.getElementById("wordBox");;
 const resetStateButton = document.getElementById("resetStateButton");
 const forwardStateButton = document.getElementById("forwardStateButton");
 const backStateButton = document.getElementById("backStateButton");
