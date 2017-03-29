@@ -10636,7 +10636,8 @@ var SequentialStateMachine = exports.SequentialStateMachine = function () {
     }, {
         key: "clearHistory",
         value: function clearHistory() {
-            _history.set(this, [{}]);
+            var myHistory = _history.get(this);
+            _history.set(this, [myHistory[0]]);
             return runTo(_history, 0);
         }
     }, {

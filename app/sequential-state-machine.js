@@ -67,7 +67,8 @@ export class SequentialStateMachine {
     }
 
     clearHistory(): Object {
-        _history.set(this, [{}]);
+        let myHistory = _history.get(this);
+        _history.set(this, [myHistory[0]]);
         return runTo(_history, 0);
     }
 
