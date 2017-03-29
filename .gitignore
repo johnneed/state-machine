@@ -1,7 +1,7 @@
 # Include your project-specific ignores in this file
 # Read about how to use .gitignore: https://help.github.com/articles/ignoring-files
 
-# Created by https://www.gitignore.io/api/windows,osx,linux,sublimetext,webstorm,node,bower,notepadpp
+/dist/
 
 ### Bower ###
 bower_components
