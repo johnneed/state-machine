@@ -36,11 +36,11 @@ function isValidMove(puzzleWidth: number, move: object): boolean {
     let keys = Object.keys(move);
     let distance = Math.abs(keys[0] - keys[1]);
 
-    function isInSameRow(move: Object): boolean {
-
+    function isInSameRow(puzzleWidth, keys): boolean {
+        return Math.floor(keys[0] / puzzleWidth) === Math.floor(keys[1] / puzzleWidth);
     }
 
-    return distance === 3 || (distance === 1 || && isInSameRow(move));
+    return distance === 3 || (distance === 1 && isInSameRow(puzzleWidth, keys));
 }
 
 
@@ -89,7 +89,7 @@ function render(state: object): void {
     });
 }
 
-function moveTile(puzzleWidth:Number, puzzlePiece: Object): void {
+function moveTile(puzzleWidth: Number, puzzlePiece: Object): void {
     return function () {
         let currentState = stateMachine.returnState();
         let move = computeMove(currentState, puzzlePiece);
@@ -99,7 +99,6 @@ function moveTile(puzzleWidth:Number, puzzlePiece: Object): void {
         }
     };
 }
-
 
 
 Rx.Observable.fromEvent(puzzlePiece1, "click").subscribe(moveTile(puzzlePiece1));
