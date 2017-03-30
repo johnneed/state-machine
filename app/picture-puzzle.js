@@ -33,19 +33,17 @@ let initialState = {
 let stateMachine = invariantCheck(stateValidation(IndexedStateMachine.create(initialState)));
 
 /**
- * Checks a move to see if it's valid in 3x3 puzzle
- * @param move
+ * Checks a move to see if it's valid
+ * @param {number} puzzleWidth - the number tiles in a reow
+ * @param {object} move - which tile moves where
  * @returns {boolean}
  */
 function isValidMove(puzzleWidth: number, move: object): boolean {
     let keys = Object.keys(move);
     let distance = Math.abs(keys[0] - keys[1]);
-
-
     function isInSameRow(pos1: number, pos2: number, puzzleWidth: number): boolean {
         return Math.floor((pos1 - 1) / puzzleWidth) === Math.floor((pos2 - 1) / puzzleWidth);
     }
-
     return distance === 3 || (distance === 1 && isInSameRow(keys[0], keys[1], puzzleWidth));
 
 }
@@ -85,7 +83,6 @@ function computeMove(state, puzzlePiece): Object {
     move[emptyPosition] = state[tilePosition];
     move[tilePosition] = null;
     return move;
-
 }
 
 function render(state: object, index = 0): void {
@@ -109,9 +106,8 @@ function moveToState(velocity) {
 }
 
 function _moveTile(puzzleWidth: Number, puzzlePiece: Object): void {
-
     return function () {
-        let currentState = stateMachine.returnState();
+        let currentState = stateMachine.currentState();
         let move = computeMove(currentState, puzzlePiece);
         if (isValidMove(puzzleWidth, move)) {
             stateMachine.addSequence(move);

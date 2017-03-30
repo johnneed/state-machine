@@ -54,7 +54,7 @@ export class SequentialStateMachine {
     }
 
     returnState(index: ?number): Object {
-        let _index = index || _history.get(this).length - 1; // return the last state if no index provided
+        let _index = isNaN(index) ? _history.get(this).length - 1 : Number(index); // return the last state if no index provided
         try {
             return runTo(_history.get(this), _index);
         } catch (err) {
