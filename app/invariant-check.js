@@ -17,10 +17,18 @@ export function invariantCheck(stateMachine: SequentialStateMachine): Sequential
             return _isValidNewState(rules, state);
         },
         addState: function (state): boolean {
-            if (this.newStateIsValid(state)) {
+            if (_isValidNewState(rules, state)) {
                 stateMachine.addState(state);
                 return true
             }
+            return false;
+        },
+        setInitialState: function (state: Object): boolean {
+            if (_isValidNewState(rules, state)) {
+                stateMachine.setInitialState(state);
+                return true;
+            }
+            console.log("invariant state passed");
             return false;
         }
 

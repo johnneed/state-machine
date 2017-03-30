@@ -40,6 +40,8 @@ export class SequentialStateMachine {
         this.size = this.size.bind(this);
         this.clearHistory = this.clearHistory.bind(this);
         this.destroy = this.destroy.bind(this);
+        this.setInitialState = this.setInitialState.bind(this);
+        this.calculateState = this.calculateState.bind(this);
         _history.set(this, [(initialState || {})]);
     }
 
@@ -51,6 +53,21 @@ export class SequentialStateMachine {
             _history.set(this, historyPart);
         }
         return runTo(historyPart, historyPart.length - 1);
+    }
+
+    calculateState(sequence, index): Object {
+        let myHistory = _history.get(this);
+        let historyPart = myHistory.slice(0, (typeof index === "number" ? index + 1 : myHistory.length));
+        if (!diffState(historyPart, sequence)) {
+            historyPart = historyPart.concat(sequence);
+            _history.set(this, historyPart);
+        }
+        return runTo(historyPart, historyPart.length - 1);
+    }
+
+    setInitialState(state: Object): Object {
+        _history.set(this, [state]);
+        return runTo(_history.get(this), 0);
     }
 
     returnState(index: ?number): Object {
@@ -69,7 +86,7 @@ export class SequentialStateMachine {
     clearHistory(): Object {
         let myHistory = _history.get(this);
         _history.set(this, [myHistory[0]]);
-        return runTo(_history, 0);
+        return runTo(_history.get(this), 0);
     }
 
     destroy(): void {

@@ -19,6 +19,7 @@ export class IndexedStateMachine extends SequentialStateMachine {
         this.isLastState = this.isLastState.bind(this);
         this.destroy = this.destroy.bind(this);
         this.reset = this.reset.bind(this);
+        this.setInitialState = this.setInitialState.bind(this);
         _indexCache.set(this, 0);
     }
 
@@ -47,6 +48,11 @@ export class IndexedStateMachine extends SequentialStateMachine {
 
     isLastState(): boolean {
         return super.size() === _indexCache.get(this) + 1;
+    }
+
+    setInitialState(state: Object):Object{
+        _indexCache.set(this, 0);
+        return super.setInitialState(state);
     }
 
     reset(): Object {
