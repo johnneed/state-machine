@@ -41,15 +41,17 @@ let stateMachine = invariantCheck(stateValidation(IndexedStateMachine.create(ini
 function isValidMove(puzzleWidth: number, move: object): boolean {
     let keys = Object.keys(move);
     let distance = Math.abs(keys[0] - keys[1]);
+
     function isInSameRow(pos1: number, pos2: number, puzzleWidth: number): boolean {
         return Math.floor((pos1 - 1) / puzzleWidth) === Math.floor((pos2 - 1) / puzzleWidth);
     }
+
     return distance === 3 || (distance === 1 && isInSameRow(keys[0], keys[1], puzzleWidth));
 
 }
 
 
-function validateTileInversions(puzzleWidth: number, state: object): boolean {
+function validateTileInversions(initialState: object, puzzleWidth : number, state: object): boolean {
     let pieceOrder = Object.keys(initialState).filter(key => initialState[key] !== null).reduce((wmap, key) => {
         wmap.set(initialState[key], key);
         return wmap;
@@ -96,7 +98,14 @@ function render(state: object, index = 0): void {
 }
 
 
-function reset() {
+function reset(initialState: Object): Object {
+    function randomize(countdown : number, state: object) {
+      var pos1 =  Math.round(Math.random() * (Object.keys(state).length - 1) + 1);
+      var pos2 = Math.round( Math.random() * 4 + 1)
+    }
+
+    var newState = Object.keys(initialState).reduce((state, key) => {
+    }, {});
 }
 
 function moveToState(velocity) {
