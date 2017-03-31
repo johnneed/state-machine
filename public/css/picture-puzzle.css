@@ -101,6 +101,14 @@ h1 {
     box-shadow: 0 1px 0 #272727;
 }
 
+.puzzle-completed {
+    visibility: hidden;
+}
+
+.puzzle-completed .is-complete {
+    visibility: visible;
+}
+
 .puzzle {
     width: 300px;
     height: 300px;
@@ -114,7 +122,7 @@ h1 {
 }
 
 .puzzle-piece {
-    cursor:pointer;
+    cursor: pointer;
     height: 98px;
     width: 98px;
     border: solid 1px #494949;

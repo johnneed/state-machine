@@ -12,11 +12,13 @@ let puzzlePiece5 = document.getElementById("puzzlePiece5");
 let puzzlePiece6 = document.getElementById("puzzlePiece6");
 let puzzlePiece7 = document.getElementById("puzzlePiece7");
 let puzzlePiece8 = document.getElementById("puzzlePiece8");
+
 const resetStateButton = document.getElementById("resetStateButton");
 const forwardStateButton = document.getElementById("forwardStateButton");
 const backStateButton = document.getElementById("backStateButton");
 const stateIndexDisplay = document.getElementById("stateIndexDisplay");
 const shuffleButton = document.getElementById("shuffleButton");
+const puzzleCompleted = document.getElementById("puzzleCompleted");
 
 let _completedPuzzleState = {
     1: puzzlePiece1,
@@ -52,6 +54,13 @@ function isValidMove(puzzleWidth: number, move: object): boolean {
 
 }
 
+function _markCompletion(element: Object, isComplete: boolean): void {
+    if(isCompleted){
+        element.className = element.className.replace("is-complete").trim();
+    } else {
+        element.className = `${element.className} is-complete`;
+    }
+}
 
 function validateTileInversions(initialState: object, puzzleWidth: number, state: object): boolean {
     let pieceOrder = Object.keys(initialState).filter(key => initialState[key] !== null).reduce((wmap, key) => {
@@ -72,15 +81,15 @@ function validateTileInversions(initialState: object, puzzleWidth: number, state
     return countInversions(tilePositions, puzzleWidth);
 }
 
-function isCompleted(completedState, currentState){
-    return R.isEqual(completedState, currentState)
+function isCompleted(completedState, currentState) {
+    return R.equals(completedState, currentState)
 }
 
 stateMachine.addInvariantRule(R.curry(validateTileInversions)(_completedPuzzleState)(_puzzleWidth));
-stateMachine.addRule(R.curry(isCompleted)(_completedPuzzleStateState));
+stateMachine.addRule({one: R.curry(isCompleted)(_completedPuzzleState)});
 
 
-function findTilePosition(state: Object, puzzlePiece = null): object {
+function findTilePosition(state: Object, puzzlePiece = null): Object {
     return Object.keys(state).find(key => {
         return state[key] === puzzlePiece;
     });
@@ -95,7 +104,7 @@ function computeMove(state, puzzlePiece): Object {
     return move;
 }
 
-function render(state: object, index = 0): void {
+function render(state: Object, index = 0): void {
     Object.keys(state).forEach(key => {
         if (state[key] !== null) {
             state[key].className = `puzzle-piece position-${key}`;
@@ -106,30 +115,32 @@ function render(state: object, index = 0): void {
 }
 
 
-function reset() {
+function reset(): void {
     render(stateMachine.reset());
 }
 
 function randomizeState(initialState: Object): Object {
-         function randomize(countdown: number, state: object) {
-            if (countdown <= 0) {
-                return state;
-            }
-            let tileCount = Object.keys(state).length;
-            let pos1 = Math.round(Math.random() * (tileCount - 1) + 1);
-            let pos2 = Math.round(Math.random() * (tileCount - 1) + 1);
-            let transition1 = {};
-            let transition2 = {};
-            transition1[pos1] = state[pos2];
-            transition2[pos2] = state[pos1];
-            return randomize(countdown - 1, Object.assign({}, state, transition1, transition2));
+    function randomize(countdown: number, state: Object) {
+        if (countdown <= 0) {
+            return state;
         }
-        let totalCycles = Object.keys(initialState).length * 3;
-        return randomize(totalCycles, initialState);
+        let tileCount = Object.keys(state).length;
+        let pos1 = Math.round(Math.random() * (tileCount - 1) + 1);
+        let pos2 = Math.round(Math.random() * (tileCount - 1) + 1);
+        let transition1 = {};
+        let transition2 = {};
+        transition1[pos1] = state[pos2];
+        transition2[pos2] = state[pos1];
+        return randomize(countdown - 1, Object.assign({}, state, transition1, transition2));
+    }
+
+    let totalCycles = Object.keys(initialState).length * 3;
+    return randomize(totalCycles, initialState);
 }
 
-function moveToState(velocity) {
+function moveToState(velocity): Object {
     return function () {
+        markCompletion(stateMachine.isValid());
         return render(stateMachine.moveToState(velocity), stateMachine.currentIndex());
     }
 }
@@ -140,21 +151,22 @@ function _moveTile(puzzleWidth: Number, puzzlePiece: Object): void {
         let move = computeMove(currentState, puzzlePiece);
         if (isValidMove(puzzleWidth, move)) {
             stateMachine.addSequence(move);
+            markCompletion(stateMachine.isValid());
             return render(stateMachine.returnState(), stateMachine.currentIndex());
         }
     };
 }
 
-function shuffle() {
-    if(stateMachine.setInitialState(randomizeState(_completedPuzzleState))){
-          return  render(stateMachine.currentState());
+function shuffle(): void {
+    if (stateMachine.setInitialState(randomizeState(_completedPuzzleState))) {
+        markCompletion(stateMachine.isValid());
+        return render(stateMachine.currentState());
     }
     shuffle();
 }
 
-function markAsCompleted(){
+let markCompletion = R.curry(_markCompletion)(puzzleCompleted);
 
-}
 
 let moveTile = R.curry(_moveTile)(3);
 
