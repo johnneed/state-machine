@@ -4,7 +4,7 @@
 function _validate(rules: Object, state: Object): Object {
     return Object.keys(rules).reduce((validation: Object, key: string) => {
         if (typeof rules[key] === "function") {
-            validation[key] = rules[key](state[key]);
+            validation[key] = rules[key](state);
             return validation;
         }
         if (typeof rules[key] === "object" && typeof state[key] === "object") {
@@ -18,7 +18,7 @@ function _validate(rules: Object, state: Object): Object {
 function _isValid(validation): boolean {
     return Object.keys(validation).reduce((isValid, key) => {
         if (typeof validation[key] === "boolean") {
-             return isValid && validation[key];
+            return isValid && validation[key];
         }
         return isValid && (typeof validation[key] === "undefined" || _isValid(validation[key]));
     }, true);
@@ -27,17 +27,16 @@ function _isValid(validation): boolean {
 export function stateValidation(stateMachine: SequentialStateMachine): SequentialStateMachine {
     let rules = {};
     let validatedStateMachine = {
-        addRule: function (rule) {
+        addValidationRule: function (rule): void {
             rules = Object.assign({}, rules, rule);
         },
-        validate: function () {
+        validate: function (): object {
             let state = stateMachine.currentState();
             return _validate(rules, state);
         },
-        isValid: function(){
+        isValid: function (): boolean {
             return _isValid(this.validate());
         }
-
     };
     return Object.assign({}, stateMachine, validatedStateMachine);
 

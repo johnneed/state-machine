@@ -49,14 +49,14 @@ Rx.Observable.fromEvent(wordBox, "keyup").subscribe(addState("word"));
 Rx.Observable.fromEvent(forwardStateButton, "click").subscribe(moveToState(1));
 Rx.Observable.fromEvent(backStateButton, "click").subscribe(moveToState(-1));
 Rx.Observable.fromEvent(resetStateButton, "click").subscribe(reset);
-myStateMachine.addRule({
-    number: function (value) {
-        return value === "" || typeof value === "undefined" || (!isNaN(value) && Number(value) >= 0 && Number(value) <= 100);
+myStateMachine.addValidationRule({
+    number: function (state) {
+        return state.number === "" || typeof state.number === "undefined" || (!isNaN(state.number) && Number(state.number) >= 0 && Number(state.number) <= 100);
     }
 });
-myStateMachine.addRule({
-    word: function (value) {
-        return (value || "").length < 10;
+myStateMachine.addValidationRule({
+    word: function (state) {
+        return (state.word || "").length < 10;
     }
 });
 render(myStateMachine.returnState());

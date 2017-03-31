@@ -55,10 +55,10 @@ function isValidMove(puzzleWidth: number, move: object): boolean {
 }
 
 function _markCompletion(element: Object, isComplete: boolean): void {
-    if(isCompleted){
-        element.className = element.className.replace("is-complete").trim();
+    if(isComplete){
+        element.classList.add("is-complete");
     } else {
-        element.className = `${element.className} is-complete`;
+        element.classList.remove("is-complete");
     }
 }
 
@@ -86,7 +86,7 @@ function isCompleted(completedState, currentState) {
 }
 
 stateMachine.addInvariantRule(R.curry(validateTileInversions)(_completedPuzzleState)(_puzzleWidth));
-stateMachine.addRule({one: R.curry(isCompleted)(_completedPuzzleState)});
+stateMachine.addValidationRule({one: R.curry(isCompleted)(_completedPuzzleState)});
 
 
 function findTilePosition(state: Object, puzzlePiece = null): Object {

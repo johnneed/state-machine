@@ -103,9 +103,10 @@ h1 {
 
 .puzzle-completed {
     visibility: hidden;
+    text-align: center;
 }
 
-.puzzle-completed .is-complete {
+.puzzle-completed.is-complete {
     visibility: visible;
 }
 
