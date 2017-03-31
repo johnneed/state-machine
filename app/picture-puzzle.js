@@ -4,6 +4,7 @@ import {default as Rx} from "rxjs/Rx";
 import {default as R} from "ramda";
 import {IndexedStateMachine} from "./indexed-state-machine";
 
+let puzzle = document.getElementById("puzzle");
 let puzzlePiece1 = document.getElementById("puzzlePiece1");
 let puzzlePiece2 = document.getElementById("puzzlePiece2");
 let puzzlePiece3 = document.getElementById("puzzlePiece3");
@@ -12,6 +13,8 @@ let puzzlePiece5 = document.getElementById("puzzlePiece5");
 let puzzlePiece6 = document.getElementById("puzzlePiece6");
 let puzzlePiece7 = document.getElementById("puzzlePiece7");
 let puzzlePiece8 = document.getElementById("puzzlePiece8");
+
+
 
 const resetStateButton = document.getElementById("resetStateButton");
 const forwardStateButton = document.getElementById("forwardStateButton");
@@ -35,6 +38,21 @@ let _completedPuzzleState = {
 let _puzzleWidth = 3;
 
 let stateMachine = invariantCheck(stateValidation(IndexedStateMachine.create(_completedPuzzleState)));
+
+
+
+function generatePuzzle(tileCount:number, puzzleHash = []): Object[] {
+     let _puzzleHash = Object.assign({},puzzleHash);
+     if(tileCount <= 0 ) {return _puzzleHash;}
+     let nextKey = Object.keys(puzzleHash).length + 1;
+     let tile = document.createElement("div")  ;
+     tile.classList.add("puzzle-piece");
+     tile.classList.add(`position-${nextKey}`);
+     tile.id =`puzzlePiece${nextKey}`;
+     _puzzleHash[nextKey] = tile;
+     generatePuzzle(tileCount - 1, _puzzleHash)
+}
+
 
 /**
  * Checks a move to see if it's valid
