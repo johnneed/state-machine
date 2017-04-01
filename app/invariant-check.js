@@ -26,9 +26,11 @@ export function invariantCheck(stateMachine: SequentialStateMachine): Sequential
         setInitialState: function (state: Object): boolean {
             if (_isValidNewState(rules, state)) {
                 stateMachine.setInitialState(state);
+                console.log("state passed invariant check - huzzah!");
+
                 return true;
             }
-            console.log("invariant state passed");
+            console.log("state failed invariant check - try again");
             return false;
         }
 

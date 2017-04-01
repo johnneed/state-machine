@@ -11,7 +11,7 @@ const backStateButton = document.getElementById("backStateButton");
 const stateIndexDisplay = document.getElementById("stateIndexDisplay");
 const shuffleButton = document.getElementById("shuffleButton");
 const puzzleCompleted = document.getElementById("puzzleCompleted");
-
+const puzzleSizeControl =document.getElementById("puzzleSize");
 
 function generatePuzzle(tileCount: number, puzzleHash = []): Element[] {
     let _puzzleHash = Object.assign({}, puzzleHash);
@@ -26,7 +26,6 @@ function generatePuzzle(tileCount: number, puzzleHash = []): Element[] {
     tile.id = `puzzlePiece${key}`;
 
     Rx.Observable.fromEvent(tile, "click").subscribe(moveTile(tile));
-
     _puzzleHash[key] = tile;
     return generatePuzzle(tileCount - 1, _puzzleHash)
 }
@@ -52,7 +51,7 @@ function addPuzzle(completedPuzzleState: Object, puzzleContainer: Element): void
 
 /**
  * Checks a move to see if it's valid
- * @param {number} puzzleWidth - the number tiles in a reow
+ * @param {number} puzzleWidth - the number tiles in a row
  * @param {object} move - which tile moves where
  * @returns {boolean}
  */
@@ -64,7 +63,7 @@ function isValidMove(puzzleWidth: number, move: object): boolean {
         return Math.floor((pos1 - 1) / puzzleWidth) === Math.floor((pos2 - 1) / puzzleWidth);
     }
 
-    return distance === 3 || (distance === 1 && isInSameRow(keys[0], keys[1], puzzleWidth));
+    return distance === puzzleWidth || (distance === 1 && isInSameRow(keys[0], keys[1], puzzleWidth));
 
 }
 
@@ -84,15 +83,27 @@ function validateTileInversions(initialState: object, puzzleWidth: number, state
     let tilePositions = Object.keys(state).sort().filter(key => state[key] !== null).map(key => pieceOrder.get(state[key]));
 
     function countInversions(numArr: number[], _puzzleWidth: number): number {
-        let count;
         if (numArr.length <= 1) {
             return 0;
         }
-        count = numArr.filter(num => numArr[0] > num).length + countInversions(numArr.slice(1), _puzzleWidth);
-        return (count / (_puzzleWidth - 1)) === Math.floor(count / (_puzzleWidth - 1));
+        return numArr.filter(num => numArr[0] > num).length + countInversions(numArr.slice(1), _puzzleWidth);
     }
 
-    return countInversions(tilePositions, puzzleWidth);
+    // If the grid width is odd, then the number of inversions in a solvable situation is even.
+    //     If the grid width is even, and the blank is on an even row counting from the bottom (second-last, fourth-last etc), then the number of inversions in a solvable situation is odd.
+    //     If the grid width is even, and the blank is on an odd row counting from the bottom (last, third-last, fifth-last etc) then the number of inversions in a solvable situation is even.
+    //     That gives us this formula for determining invariance:
+    //
+    //     ( (grid width odd) && (#inversions even) )  ||  ( (grid width even) && ((blank on odd row from bottom) == (#inversions even)) )
+
+    let inversionsCount = countInversions(tilePositions, puzzleWidth);
+    let gridWidthIsEven = puzzleWidth / 2 === Math.floor(puzzleWidth / 2);
+    let inversionsIsEven = inversionsCount / 2 === Math.floor(inversionsCount / 2);
+    let rowCount = Math.ceil(Object.keys(initialState).length / puzzleWidth);
+    let blankPosition = Object.keys(initialState).map((key, index) => (initialState[key] === null ? index + 1 : NaN)).find(num => !isNaN(num));
+    let blankRowFromBottom = rowCount - Math.ceil(blankPosition / puzzleWidth) + 1;
+    let blankOnOddRowFromBttom = blankRowFromBottom / 2 === Math.floor(blankRowFromBottom);
+    return ( !gridWidthIsEven && inversionsIsEven ) || ( gridWidthIsEven && (blankOnOddRowFromBttom === inversionsIsEven));
 }
 
 function isCompleted(completedState, currentState) {
@@ -176,9 +187,9 @@ function shuffle(): void {
     shuffle();
 }
 
+let _puzzleWidth = 4;
 let markCompletion = R.curry(_markCompletion)(puzzleCompleted);
-let moveTile = R.curry(_moveTile)(3);
-let _puzzleWidth = 3;
+let moveTile = R.curry(_moveTile)(_puzzleWidth);
 let _completedPuzzleState = generatePuzzle(Math.pow(_puzzleWidth, 2));
 let stateMachine = invariantCheck(stateValidation(IndexedStateMachine.create(_completedPuzzleState)));
 
@@ -191,4 +202,4 @@ Rx.Observable.fromEvent(forwardStateButton, "click").subscribe(moveToState(1));
 Rx.Observable.fromEvent(backStateButton, "click").subscribe(moveToState(-1));
 Rx.Observable.fromEvent(resetStateButton, "click").subscribe(reset);
 Rx.Observable.fromEvent(shuffleButton, "click").subscribe(shuffle);
-
+Rx.Observable.fromEvent(puzzleSizeControl,"change").subscribe(generatePuzzle);

@@ -1,0 +1,175 @@
+body {
+  padding: 2rem;
+  font-family: 'Space Mono', monospace;
+  background-color: #2E2F2F;
+  color: #AAA;
+}
+
+section {
+  border: solid 1px #393939;
+  margin: 0 auto 1rem auto;
+  padding: 1rem;
+  box-shadow: 0 11px 14px -12px rgba(20, 20, 40, 0.5);
+  max-width: 40rem;
+  text-align: center;
+  background-color: #313232;
+}
+
+button {
+  font-size: 1.4rem;
+  cursor: pointer;
+  background-color: #353535;
+  padding: 0.5rem 1.3rem;
+  border: 1px;
+  color: #AAA;
+  transition: color 0.25s, box-shadow 0.25s, background-color 0.25s;
+  outline: none;
+}
+
+button:hover, button:focus {
+  color: #DDD;
+  background-color: #404040;
+  box-shadow: 0 11px 14px -12px rgba(20, 20, 40, 0.75);
+}
+
+input[type="text"], input[type="number"] {
+  min-width: 2rem;
+  font-size: 1rem;
+  background-color: #383838;
+  color: #AAA;
+  border: solid 1px #353535;
+  outline: none;
+  padding: 0.2rem;
+  display: inline-block;
+  transition: background 0.25s, border 0.25s, box-shadow 0.25s, color 0.25s;
+}
+
+input[type="text"]:focus, input[type="number"]:focus, input[type="text"]:hover, input[type="number"]:hover {
+  color: #DDD;
+  background-color: #404040;
+  border: solid 1px #595959;
+  box-shadow: 0 11px 14px -12px rgba(20, 20, 40, 0.75);
+}
+
+.back-state-button {
+  margin-right: 1rem;
+}
+
+.forward-state-button {
+  margin-left: 1rem;
+}
+
+.new-sequence-label {
+  display: block;
+  margin: 1rem auto;
+  text-align: center;
+}
+
+.new-sequence-label small {
+  font-size: 0.7rem;
+}
+
+.new-sequence-label span:first-child {
+  display: inline-block;
+  text-align: right;
+}
+
+.state-label {
+  display: block;
+  margin-bottom: 1rem;
+  text-align: left;
+}
+
+.state-label span:first-child {
+  display: inline-block;
+  min-width: 6rem;
+  text-align: right;
+}
+
+.state-index {
+  margin: 0 0 1rem 0;
+  padding-bottom: 1rem;
+  border-bottom: solid 1px #393939;
+  box-shadow: 0 1px 0 #272727;
+}
+
+h1 {
+  text-align: center;
+  margin: 0 0 1rem 0;
+  padding-bottom: 1rem;
+  border-bottom: solid 1px #393939;
+  box-shadow: 0 1px 0 #272727;
+}
+
+.puzzle-completed {
+  visibility: hidden;
+  text-align: center;
+}
+
+.puzzle-completed.is-complete {
+  visibility: visible;
+}
+
+.puzzle {
+  box-sizing: content-box;
+  margin: 0 auto;
+  box-shadow: 0 11px 14px -12px rgba(20, 20, 40, 0.5);
+  border: solid 1px #393939;
+  position: relative;
+  margin-bottom: 2rem;
+  background-color: #EEE;
+}
+
+.puzzle-piece {
+  height: 98px;
+  width: 98px;
+  cursor: pointer;
+  border: solid 1px #494949;
+  position: absolute;
+  transition: top 1s, left 1s, border-color .5s;;
+  background-repeat: no-repeat;
+  background-image: url("https://upload.wikimedia.org/wikipedia/commons/d/dc/Young_cats.jpg");
+}
+
+.puzzle-piece:hover {
+  border-color: #AAA;
+}
+
+.generate-row(@size, @row-index, @column: 0) when (@column < @size) {
+  @positionNum: @size * @row-index + @column + 1;
+  @left: @column * 100;
+  @top: @row-index * 100;
+  .position-@{positionNum} {
+    left: @left * 1px;
+    top: @top * 1px;
+  }
+
+  #puzzlePiece@{positionNum} {
+    background-position: (@left * -1px) (@top * -1px);
+  }
+  .generate-row(@size, @row-index, (@column + 1));
+}
+
+.generate-tiles(@size, @row: 0) when (@row < @size) {
+  .generate-row(@size, @row);
+  .generate-tiles(@size, (@row + 1))
+}
+
+.generate-puzzle(@rows) {
+  .puzzle-@{rows} {
+    width: @rows * 100px;
+    height: @rows * 100px;
+    .puzzle-piece {
+      background-size: auto (@rows * 100px);
+    }
+    .generate-tiles(@rows);
+  }
+}
+
+.generate-puzzle(3);
+.generate-puzzle(4);
+.generate-puzzle(5);
+.generate-puzzle(6);
+
+
+

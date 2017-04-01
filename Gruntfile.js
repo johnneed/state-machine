@@ -146,9 +146,9 @@ module.exports = function (grunt) {
                 options: {
                     // paths: [npm "assets/css"]
                 },
-                files: {
-                    "<%= paths.css %>/main.css": "<%= paths.less %>/main.less"
-                }
+                files: [
+                    {"<%= paths.css %>/picture-puzzle.css": "<%= paths.less %>/picture-puzzle.less"}
+                ]
             }
         },
         watch: {
@@ -232,6 +232,6 @@ module.exports = function (grunt) {
         }
     });
     // Default task.
-    grunt.registerTask("default", ["clean:dist", "copy:dist", "webpack:dev", "browserSync", "watch"]);
+    grunt.registerTask("default", ["clean:dist", "copy:dist", "less:dev", "webpack:dev", "browserSync", "watch"]);
     grunt.registerTask("dev-build", ["clean:dist", "copy:dist", "less:dev", "webpack:dev"]);
 };

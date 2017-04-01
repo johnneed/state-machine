@@ -7,7 +7,7 @@
 </head>
 <body>
 <h2 class="puzzle-completed" id="puzzleCompleted">Huzzah!!</h2>
-<div class="puzzle" id="puzzle"></div>
+<div class="puzzle puzzle-4" id="puzzle"></div>
 
 <section id="stateDisplay" class="state-display">
     <h3 class="state-index">
@@ -16,9 +16,14 @@
 
     <span class="controls">
         <button id="backStateButton" class="back-state-button" tabindex="10">&larr;</button>
+
         <button id="resetStateButton" class="reset-state-button" tabindex="11">Reset</button>
         <button id="shuffleButton" class="shuffle-state-button" tabindex="11">Shuffle Tiles</button>
         <button id="forwardStateButton" class="forward-state-button" tabindex="12">&rarr;</button>
+           <label class="new-sequence-label">
+        <span>Puzzle Size : </span>
+        <input id="puzzleSize" class="state-number-box" type="number" min="3" max="6" step="1" tabindex="1" value="3" />
+    </label>
     </span>
 </section>
     <script src="js/picture-puzzle.bundle.js"></script>
