@@ -4,18 +4,7 @@ import {default as Rx} from "rxjs/Rx";
 import {default as R} from "ramda";
 import {IndexedStateMachine} from "./indexed-state-machine";
 
-let puzzle = document.getElementById("puzzle");
-let puzzlePiece1 = document.getElementById("puzzlePiece1");
-let puzzlePiece2 = document.getElementById("puzzlePiece2");
-let puzzlePiece3 = document.getElementById("puzzlePiece3");
-let puzzlePiece4 = document.getElementById("puzzlePiece4");
-let puzzlePiece5 = document.getElementById("puzzlePiece5");
-let puzzlePiece6 = document.getElementById("puzzlePiece6");
-let puzzlePiece7 = document.getElementById("puzzlePiece7");
-let puzzlePiece8 = document.getElementById("puzzlePiece8");
-
-
-
+const puzzle = document.getElementById("puzzle");
 const resetStateButton = document.getElementById("resetStateButton");
 const forwardStateButton = document.getElementById("forwardStateButton");
 const backStateButton = document.getElementById("backStateButton");
@@ -23,34 +12,41 @@ const stateIndexDisplay = document.getElementById("stateIndexDisplay");
 const shuffleButton = document.getElementById("shuffleButton");
 const puzzleCompleted = document.getElementById("puzzleCompleted");
 
-let _completedPuzzleState = {
-    1: puzzlePiece1,
-    2: puzzlePiece2,
-    3: puzzlePiece3,
-    4: puzzlePiece4,
-    5: puzzlePiece5,
-    6: puzzlePiece6,
-    7: puzzlePiece7,
-    8: puzzlePiece8,
-    9: null
-};
 
-let _puzzleWidth = 3;
+function generatePuzzle(tileCount: number, puzzleHash = []): Element[] {
+    let _puzzleHash = Object.assign({}, puzzleHash);
+    let key = Object.keys(puzzleHash).length + 1;
+    if (tileCount <= 1) {
+        _puzzleHash[key] = null;
+        return _puzzleHash;
+    }
+    let tile = document.createElement("div");
+    tile.classList.add("puzzle-piece");
+    tile.classList.add(`position-${key}`);
+    tile.id = `puzzlePiece${key}`;
 
-let stateMachine = invariantCheck(stateValidation(IndexedStateMachine.create(_completedPuzzleState)));
+    Rx.Observable.fromEvent(tile, "click").subscribe(moveTile(tile));
+
+    _puzzleHash[key] = tile;
+    return generatePuzzle(tileCount - 1, _puzzleHash)
+}
 
 
+// Very imperative here :-(
+function addPuzzle(completedPuzzleState: Object, puzzleContainer: Element): void {
 
-function generatePuzzle(tileCount:number, puzzleHash = []): Object[] {
-     let _puzzleHash = Object.assign({},puzzleHash);
-     if(tileCount <= 0 ) {return _puzzleHash;}
-     let nextKey = Object.keys(puzzleHash).length + 1;
-     let tile = document.createElement("div")  ;
-     tile.classList.add("puzzle-piece");
-     tile.classList.add(`position-${nextKey}`);
-     tile.id =`puzzlePiece${nextKey}`;
-     _puzzleHash[nextKey] = tile;
-     generatePuzzle(tileCount - 1, _puzzleHash)
+    let tiles = Object.keys(completedPuzzleState)
+        .filter(key => completedPuzzleState[key] !== null)
+        .map(key => completedPuzzleState[key]);
+
+    while (puzzleContainer.hasChildNodes()) {
+        puzzleContainer.removeChild(puzzleContainer.lastChild);
+    }
+
+    tiles.forEach(tile => {
+        puzzleContainer.append(tile);
+    })
+
 }
 
 
@@ -73,7 +69,7 @@ function isValidMove(puzzleWidth: number, move: object): boolean {
 }
 
 function _markCompletion(element: Object, isComplete: boolean): void {
-    if(isComplete){
+    if (isComplete) {
         element.classList.add("is-complete");
     } else {
         element.classList.remove("is-complete");
@@ -102,9 +98,6 @@ function validateTileInversions(initialState: object, puzzleWidth: number, state
 function isCompleted(completedState, currentState) {
     return R.equals(completedState, currentState)
 }
-
-stateMachine.addInvariantRule(R.curry(validateTileInversions)(_completedPuzzleState)(_puzzleWidth));
-stateMachine.addValidationRule({one: R.curry(isCompleted)(_completedPuzzleState)});
 
 
 function findTilePosition(state: Object, puzzlePiece = null): Object {
@@ -184,20 +177,16 @@ function shuffle(): void {
 }
 
 let markCompletion = R.curry(_markCompletion)(puzzleCompleted);
-
-
 let moveTile = R.curry(_moveTile)(3);
+let _puzzleWidth = 3;
+let _completedPuzzleState = generatePuzzle(Math.pow(_puzzleWidth, 2));
+let stateMachine = invariantCheck(stateValidation(IndexedStateMachine.create(_completedPuzzleState)));
 
+stateMachine.addInvariantRule(R.curry(validateTileInversions)(_completedPuzzleState)(_puzzleWidth));
+stateMachine.addValidationRule({one: R.curry(isCompleted)(_completedPuzzleState)});
+addPuzzle(_completedPuzzleState, puzzle);
 render(stateMachine.returnState(), stateMachine.currentIndex());
 
-Rx.Observable.fromEvent(puzzlePiece1, "click").subscribe(moveTile(puzzlePiece1));
-Rx.Observable.fromEvent(puzzlePiece2, "click").subscribe(moveTile(puzzlePiece2));
-Rx.Observable.fromEvent(puzzlePiece3, "click").subscribe(moveTile(puzzlePiece3));
-Rx.Observable.fromEvent(puzzlePiece4, "click").subscribe(moveTile(puzzlePiece4));
-Rx.Observable.fromEvent(puzzlePiece5, "click").subscribe(moveTile(puzzlePiece5));
-Rx.Observable.fromEvent(puzzlePiece6, "click").subscribe(moveTile(puzzlePiece6));
-Rx.Observable.fromEvent(puzzlePiece7, "click").subscribe(moveTile(puzzlePiece7));
-Rx.Observable.fromEvent(puzzlePiece8, "click").subscribe(moveTile(puzzlePiece8));
 Rx.Observable.fromEvent(forwardStateButton, "click").subscribe(moveToState(1));
 Rx.Observable.fromEvent(backStateButton, "click").subscribe(moveToState(-1));
 Rx.Observable.fromEvent(resetStateButton, "click").subscribe(reset);
