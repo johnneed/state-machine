@@ -45,6 +45,11 @@ function _markCompletion(element: Object, isComplete: boolean): void {
     }
 }
 function computeMove(state, puzzlePiece): Object {
+    function findTilePosition(state: Object, puzzlePiece = null): Object {
+        return Object.keys(state).find(key => {
+            return state[key] === puzzlePiece;
+        });
+    }
     let emptyPosition = findTilePosition(state);
     let tilePosition = findTilePosition(state, puzzlePiece);
     let move = {};
@@ -191,7 +196,7 @@ function _validateTileInversions(initialState: object, puzzleWidth: number, stat
     let rowCount = Math.ceil(Object.keys(initialState).length / puzzleWidth);
     let blankPosition = Object.keys(initialState).map((key, index) => (initialState[key] === null ? index + 1 : NaN)).find(num => !isNaN(num));
     let blankRowFromBottom = rowCount - Math.ceil(blankPosition / puzzleWidth) + 1;
-    let blankOnOddRowFromBttom = blankRowFromBottom / 2 !== Math.floor(blankRowFromBottom);
+    let blankOnOddRowFromBttom = blankRowFromBottom / 2 !== Math.floor(blankRowFromBottom/2);
     return ( !gridWidthIsEven && inversionsIsEven ) || ( gridWidthIsEven && (blankOnOddRowFromBttom === inversionsIsEven));
 }
 
@@ -199,11 +204,6 @@ function _isCompleted(completedState, currentState) {
     return R.equals(completedState, currentState)
 }
 
-function findTilePosition(state: Object, puzzlePiece = null): Object {
-    return Object.keys(state).find(key => {
-        return state[key] === puzzlePiece;
-    });
-}
 
 
 function initializePuzzle(size: number = 3): void {
@@ -236,7 +236,11 @@ class Puzzle {
 }
 
 Rx.Observable.fromEvent(puzzleSizeControl, "change").subscribe((event) => {
-    return initializePuzzle(Number(event.target.value));
+    const puzzleSize = Math.floor(Number(event.target.value));
+    if (puzzleSize <= 5 && puzzleSize >= 3)
+    {
+        return initializePuzzle(puzzleSize);
+    }
 });
 
 initializePuzzle(3);
