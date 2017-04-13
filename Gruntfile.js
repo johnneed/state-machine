@@ -147,7 +147,8 @@ module.exports = function (grunt) {
                     // paths: [npm "assets/css"]
                 },
                 files: [
-                    {"<%= paths.css %>/picture-puzzle.css": "<%= paths.less %>/picture-puzzle.less"}
+                    {"<%= paths.css %>/picture-puzzle.css": "<%= paths.less %>/picture-puzzle.less"},
+                    {"<%= paths.css %>/tetris.css": "<%= paths.less %>/tetris.less"}
                 ]
             }
         },
@@ -172,7 +173,9 @@ module.exports = function (grunt) {
                 //  devtool: 'cheap-module-eval-source-map',
                 entry: {
                     "form-history-with-validation": "./<%= paths.app %>/form-history-with-validation.js",
-                    "picture-puzzle": "./<%= paths.app %>/picture-puzzle.js"
+                    "picture-puzzle": "./<%= paths.app %>/picture-puzzle.js",
+                    "tetris": "./<%= paths.app %>/tetris.js"
+
                 },
                 failOnError: true, // don't report error to grunt if webpack find errors
                 // Use this if webpack errors are tolerable and grunt should continue

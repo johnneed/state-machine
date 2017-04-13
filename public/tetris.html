@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <link href="https://fonts.googleapis.com/css?family=Space+Mono" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="css/picture-puzzle.css"/>
+    <title>Tetris</title>
+</head>
+<body>
+<h2 class="game-over" id="gameOverMessage">Game Over</h2>
+<div class="game" id="game"></div>
+<button class="rotate-right" id="rotateRight"> &#8634;</button>
+<button class="rotate-left" id="rotateLeft">&#8635;</button>
+<button class="rotate-left" id="moveLeft">&#8635;</button>
+
+<section id="stateDisplay" class="state-display">
+    <h3 class="state-index">
+        <span id="formIsValid"></span>
+        <span>Move # : </span><span class="state-index" id="stateIndexDisplay"></span></h3>
+    <span class="controls">
+        <button id="backStateButton" class="move-left-button" tabindex="10">&larr;</button>
+        <button id="dropShapeButton" class="drop-shape-button" tabindex="11">Drop Shape</button>
+        <button id="forwardStateButton" class="move-right-button" tabindex="12">&rarr;</button>
+
+                <button id="resetStateButton" class="reset-state-button" tabindex="11">New Game</button>
+
+    </span>
+</section>
+<script src="js/picture-puzzle.bundle.js"></script>
+</body>
+</html>

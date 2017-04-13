@@ -1,8 +1,245 @@
-import {invariantCheck} from "./invariant-check";
-import {stateValidation} from "./state-validation";
-import {default as Rx} from "rxjs/Rx";
-import {default as R} from "ramda";
-import {IndexedStateMachine} from "./indexed-state-machine";
+// @flow
+
+
+let _history = new WeakMap();
+
+function diffState(history: array, state: array): boolean {
+    let currentHistory = runTo(history, history.length - 1);
+    let proposedHistory = runTo(history.concat(state), history.length);
+    return R.equals(currentHistory, proposedHistory);
+}
+
+function runTo(history: Object, stateIndex: number): Object {
+
+    function _run(index: number, state: Object) {
+        if (index === 0) {
+            return Object.assign({}, state);
+        }
+        const historyIndex = stateIndex - index + 1;
+        const newState = Object.assign({}, state, history[historyIndex]);
+        return _run(index - 1, newState);
+    }
+
+    if (stateIndex >= history.length || stateIndex < 0) {
+        throw new Error("Invalid index");
+    }
+
+    return _run(stateIndex, history[0]);
+}
+
+class SequentialStateMachine {
+
+    static create(initialState): SequentialStateMachine {
+        return new SequentialStateMachine(initialState);
+    }
+
+    constructor(initialState) {
+        this.addSequence = this.addSequence.bind(this);
+        this.returnState = this.returnState.bind(this);
+        this.size = this.size.bind(this);
+        this.clearHistory = this.clearHistory.bind(this);
+        this.destroy = this.destroy.bind(this);
+        this.setInitialState = this.setInitialState.bind(this);
+        this.calculateState = this.calculateState.bind(this);
+        _history.set(this, [(initialState || {})]);
+    }
+
+    addSequence(sequence, index): Object {
+        let myHistory = _history.get(this);
+        let historyPart = myHistory.slice(0, (typeof index === "number" ? index + 1 : myHistory.length));
+        if (!diffState(historyPart, sequence)) {
+            historyPart = historyPart.concat(sequence);
+            _history.set(this, historyPart);
+        }
+        return runTo(historyPart, historyPart.length - 1);
+    }
+
+    calculateState(sequence, index): Object {
+        let myHistory = _history.get(this);
+        let historyPart = myHistory.slice(0, (typeof index === "number" ? index + 1 : myHistory.length));
+        if (!diffState(historyPart, sequence)) {
+            historyPart = historyPart.concat(sequence);
+            _history.set(this, historyPart);
+        }
+        return runTo(historyPart, historyPart.length - 1);
+    }
+
+    setInitialState(state: Object): Object {
+        _history.set(this, [state]);
+        return runTo(_history.get(this), 0);
+    }
+
+    returnState(index: ?number): Object {
+        let _index = isNaN(index) ? _history.get(this).length - 1 : Number(index); // return the last state if no index provided
+        try {
+            return runTo(_history.get(this), _index);
+        } catch (err) {
+            return runTo(_history.get(this), _history.get(this).length - 1);
+        }
+    }
+
+    size(): number {
+        return _history.get(this).length;
+    }
+
+    clearHistory(): Object {
+        let myHistory = _history.get(this);
+        _history.set(this, [myHistory[0]]);
+        return runTo(_history.get(this), 0);
+    }
+
+    destroy(): void {
+        _history.delete(this);
+    }
+}
+
+// State Validation
+
+
+function _validate(rules: Object, state: Object): Object {
+    return Object.keys(rules).reduce((validation: Object, key: string) => {
+        if (typeof rules[key] === "function") {
+            validation[key] = rules[key](state);
+            return validation;
+        }
+        if (typeof rules[key] === "object" && typeof state[key] === "object") {
+            validation[key] = _validate(rules[key], state[key]);
+            return validation;
+        }
+        return validation;
+    }, {});
+}
+
+function _isValid(validation): boolean {
+    return Object.keys(validation).reduce((isValid, key) => {
+        if (typeof validation[key] === "boolean") {
+            return isValid && validation[key];
+        }
+        return isValid && (typeof validation[key] === "undefined" || _isValid(validation[key]));
+    }, true);
+}
+
+function stateValidation(stateMachine: SequentialStateMachine): SequentialStateMachine {
+    let rules = {};
+    let validatedStateMachine = {
+        addValidationRule: function (rule): void {
+            rules = Object.assign({}, rules, rule);
+        },
+        validate: function (): object {
+            let state = stateMachine.currentState();
+            return _validate(rules, state);
+        },
+        isValid: function (): boolean {
+            return _isValid(this.validate());
+        }
+    };
+    return Object.assign({}, stateMachine, validatedStateMachine);
+
+}
+
+
+let _indexCache = new WeakMap();
+
+class IndexedStateMachine extends SequentialStateMachine {
+
+    static create(initialState) {
+        return new IndexedStateMachine(initialState);
+    }
+
+    constructor(initialState) {
+        super(initialState || {});
+        this.addSequence = this.addSequence.bind(this);
+        this.moveToState = this.moveToState.bind(this);
+        this.currentIndex = this.currentIndex.bind(this);
+        this.currentState = this.currentState.bind(this);
+        this.isLastState = this.isLastState.bind(this);
+        this.destroy = this.destroy.bind(this);
+        this.reset = this.reset.bind(this);
+        this.setInitialState = this.setInitialState.bind(this);
+        _indexCache.set(this, 0);
+    }
+
+    addSequence(sequence): Object {
+        let _state = super.addSequence(sequence, _indexCache.get(this));
+        _indexCache.set(this, (super.size() - 1));
+        return _state;
+    }
+
+    moveToState(velocity: number): Object {
+        let newIndex = _indexCache.get(this) + velocity;
+        if (newIndex >= 0 && newIndex < this.size()) {
+            _indexCache.set(this, newIndex);
+            return super.returnState(newIndex);
+        }
+        return super.returnState(_indexCache.get(this));
+    }
+
+    currentIndex(): number {
+        return _indexCache.get(this);
+    }
+
+    currentState(): Object {
+        return super.returnState(_indexCache.get(this));
+    }
+
+    isLastState(): boolean {
+        return super.size() === _indexCache.get(this) + 1;
+    }
+
+    setInitialState(state: Object): Object {
+        _indexCache.set(this, 0);
+        return super.setInitialState(state);
+    }
+
+    reset(): Object {
+        _indexCache.set(this, 0);
+        return super.clearHistory();
+    }
+
+    destroy(): void {
+        _indexCache.delete(this);
+        super.destroy();
+    }
+}
+
+
+function _isValidNewState(rules, state): boolean {
+    return rules.reduce((isValid, rule) => {
+        return isValid && rule(state);
+    }, true);
+}
+
+function invariantCheck(stateMachine: SequentialStateMachine): SequentialStateMachine {
+    let rules = [];
+    let invariantStateMachine = {
+        addInvariantRule: function (rule) {
+            rules = rules.concat(rule);
+        },
+        newStateIsValid: function (state) {
+            return _isValidNewState(rules, state);
+        },
+        addState: function (state): boolean {
+            if (_isValidNewState(rules, state)) {
+                stateMachine.addState(state);
+                return true
+            }
+            return false;
+        },
+        setInitialState: function (state: Object): boolean {
+            if (_isValidNewState(rules, state)) {
+                stateMachine.setInitialState(state);
+                console.log("state passed invariant check - huzzah!");
+
+                return true;
+            }
+            console.log("state failed invariant check - try again");
+            return false;
+        }
+
+    };
+    return Object.assign({}, stateMachine, invariantStateMachine);
+}
+
 
 const puzzleContainer = document.getElementById("puzzle");
 const resetStateButton = document.getElementById("resetStateButton");
@@ -144,7 +381,7 @@ function _shuffle(randomizeState: Function, markCompletion: Function, render: Fu
             markCompletion(stateMachine.isValid());
             return render(stateMachine.currentState());
         }
-       return _shuffle(randomizeState, markCompletion, render, stateMachine, completedPuzzleState)();
+        return _shuffle(randomizeState, markCompletion, render, stateMachine, completedPuzzleState)();
     };
 }
 
